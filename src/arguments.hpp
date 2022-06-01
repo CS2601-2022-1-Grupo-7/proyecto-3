@@ -15,3 +15,29 @@
 // along with hello.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
+class arguments
+{
+private:
+	[[ noreturn ]]
+	void usage(int exit_code) const;
+
+	int argc;
+	char** argv;
+
+public:
+
+	fs::path dataset_path;
+	void parse();
+
+	arguments(int argc, char** argv):
+		argc(argc),
+		argv(argv)
+	{
+		parse();
+	}
+};

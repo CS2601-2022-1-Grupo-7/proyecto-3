@@ -16,9 +16,14 @@
 
 #include <iostream>
 
+#include "arguments.hpp"
 #include "mlp.hpp"
 
-int main() {
+int main(int argc, char** argv) {
+	arguments args(argc, argv);
+
+	std::cout << args.dataset_path << '\n';
+
 	MatrixXd m = MatrixXd::Random(3,3);
 	std::cout << m << '\n';
 	MLP mlp({m});
