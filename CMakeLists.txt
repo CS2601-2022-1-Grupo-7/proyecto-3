@@ -1,12 +1,12 @@
-# A C++ template
-# Copyright © 2019-2020 otreblan
+# Proyecto-3
+# Copyright © 2022 Grupo 7
 #
-# hello is free software: you can redistribute it and/or modify
+# proyecto-3 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# hello is distributed in the hope that it will be useful,
+# proyecto-3 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -16,10 +16,10 @@
 
 cmake_minimum_required(VERSION 3.13.0)
 
-project(hello
-	VERSION 4.0
-	DESCRIPTION "A C++ template"
-	HOMEPAGE_URL "https://github.com/otreblan/hello"
+project(proyecto-3
+	VERSION 0.0.0
+	DESCRIPTION "Proyecto 3"
+	HOMEPAGE_URL "https://github.com/CS2601-2022-1-Grupo-7/proyecto-3"
 )
 
 # Without this, paths are not relative in the sources list
@@ -35,14 +35,10 @@ add_executable(${PROJECT_NAME})
 # C++ version
 set_target_properties(${PROJECT_NAME}
 	PROPERTIES
-		CXX_STANDARD 17
+		CXX_STANDARD 20
 )
 
-# Packages
-find_package(bash-completion)
-
 add_subdirectory(src) # Sources list
-add_subdirectory(doc) # Documentation
 add_subdirectory(pkg) # Packaging
 
 ## Shared libraries
@@ -77,16 +73,6 @@ if(UNIX)
 		set(CMAKE_CXX_FLAGS "-Wall -Wextra -g -Og")
 	endif()
 endif()
-
-# Bash completion
-file(WRITE ${CMAKE_BINARY_DIR}/bash-completion/${PROJECT_NAME}
-	"complete -F _longopt ${PROJECT_NAME}"
-)
-
-install(FILES
-	${CMAKE_BINARY_DIR}/bash-completion/${PROJECT_NAME}
-	DESTINATION ${BASH_COMPLETION_COMPLETIONSDIR}/
-)
 
 # Install target
 install(TARGETS ${PROJECT_NAME}
