@@ -3,6 +3,7 @@
 ## Dependencies
 
 * `cmake`
+* `libeigen3-dev`
 
 ## Build
 ``` bash

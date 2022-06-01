@@ -16,8 +16,20 @@
 
 #include <iostream>
 
-int main()
-{
-	std::cout << "Hello\n";
-	return 0;
+#include "mlp.hpp"
+
+int main() {
+	MatrixXd m = MatrixXd::Random(3,3);
+	std::cout << m << '\n';
+	MLP mlp({m});
+	VectorXd Shk(3);
+	VectorXd So(3);
+	VectorXd Sd(3);
+	Shk << 1, 2, 3;
+	So << 2, 2, 2;
+	Sd << 2, 3, 4;
+
+	std::cout << mlp.forward(Shk) << '\n';
+	std::cout << m.rows() << '\n';
+	mlp.backward(10, 0.5, mlp.forward(So), mlp.forward(Sd), mlp.forward(Shk));
 }
