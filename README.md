@@ -1,18 +1,12 @@
-[![C/C++ CI](https://github.com/otreblan/hello/workflows/C/C++%20CI/badge.svg)](https://github.com/otreblan/hello/actions?query=workflow%3A%22C%2FC%2B%2B+CI%22)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/otreblan/hello?logo=github)
-![GitHub](https://img.shields.io/github/license/otreblan/hello?logo=gnu)
-
-# A C++ template
+# Proyecto 3
 
 ## Dependencies
 
-* `asciidoctor`
-* `bash-completion`
 * `cmake`
 
 ## Build
 ``` bash
-git clone https://github.com/otreblan/hello
+git clone https://github.com/CS2601-2022-1-Grupo-7/proyecto-3
 cd hello
 
 mkdir -p build
