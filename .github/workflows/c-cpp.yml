@@ -72,6 +72,7 @@ jobs:
           export MAKEFLAGS=-j$(nproc)
           export PKGDEST=./
           export PKGEXT=.pkg.tar.zst
+          sudo -Eu ab git config --global --add safe.directory ./
           sudo -Eu ab makepkg -s --noconfirm
 
     - uses: actions/upload-artifact@v2
