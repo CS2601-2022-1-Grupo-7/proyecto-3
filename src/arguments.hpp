@@ -17,6 +17,7 @@
 #pragma once
 
 #include <filesystem>
+#include <vector>
 
 namespace fs = std::filesystem;
 
@@ -30,8 +31,20 @@ private:
 	char** argv;
 
 public:
+	enum class type
+	{
+		SIGMOID,
+		TANH,
+		RELU
+	};
 
-	fs::path dataset_path;
+	fs::path         dataset_path;
+	int              characteristics;
+	int              hidden_layers;
+	std::vector<int> neurons;
+	int              output_neurons;
+	type             activation;
+
 	void parse();
 
 	arguments(int argc, char** argv):

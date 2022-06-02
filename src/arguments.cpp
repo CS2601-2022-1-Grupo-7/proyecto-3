@@ -15,6 +15,7 @@
 // along with hello.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cstdlib>
+#include <cstring>
 #include <getopt.h>
 #include <iostream>
 
@@ -24,7 +25,14 @@ void arguments::usage(int exit_code) const
 {
 	std::cout
 		<< "Usage: " << argv[0] << " PATH\n"
-		<< "\t-h, --help Show this help\n"
+		<< "\t-h, --help                 Show this help.\n"
+		<< "\t-c, --characteristics=N    Number of characteristics.\n"
+		<< "\t-l, --hidden-layers=N      Number of hidden layers.\n"
+		<< "\t-n, --neurons=N,...        Number of neurons in each layer.\n"
+		<< "\t-N, --output-neurons=N     Number of neurons in the output layer.\n"
+		<< "\t-s, --sigmoid              Select Sigmoid activation function.\n"
+		<< "\t-t, --tanh                 Select Tanh activation function.\n"
+		<< "\t-r, --relu                 Select RELU activation function.\n"
 		;
 
 	exit(exit_code);
@@ -37,11 +45,18 @@ void arguments::parse()
 
 	int c;
 
-	static const char shortopts[] = "h";
+	static const char shortopts[] = "hc:l:n:N:a:";
 	static const option options[] =
 	{
-		{"help",   no_argument,       nullptr, 'h'},
-		{nullptr,  0,                 nullptr, 0},
+		{"help",            no_argument,       nullptr, 'h'},
+		{"characteristics", required_argument, nullptr, 'c'},
+		{"hidden-layers",   required_argument, nullptr, 'l'},
+		{"neurons",         required_argument, nullptr, 'n'},
+		{"output-neurons",  required_argument, nullptr, 'N'},
+		{"sigmoid",         no_argument,       nullptr, 's'},
+		{"tanh",            no_argument,       nullptr, 't'},
+		{"relu",            no_argument,       nullptr, 'r'},
+		{nullptr,           0,                 nullptr, 0},
 	};
 
 	while((c = getopt_long(argc, argv, shortopts, options, nullptr)) != -1)
@@ -50,6 +65,43 @@ void arguments::parse()
 		{
 			case 'h':
 				usage(EXIT_SUCCESS);
+
+			case 'c':
+				characteristics = atoi(optarg);
+				break;
+
+			case 'l':
+				hidden_layers = atoi(optarg);
+				break;
+
+			case 'n':
+				static const char delim[] = " ,\t\n";
+				char* buffer;
+
+				for(char* token = strtok_r(optarg, delim, &buffer);
+					token;
+					token = strtok_r(nullptr, delim, &buffer)
+				)
+				{
+					neurons.push_back(atoi(token));
+				}
+				break;
+
+			case 'N':
+				output_neurons = atoi(optarg);
+				break;
+
+			case 's':
+				activation = type::SIGMOID;
+				break;
+
+			case 't':
+				activation = type::TANH;
+				break;
+
+			case 'r':
+				activation = type::RELU;
+				break;
 
 			case '?':
 				exit(EXIT_FAILURE);
