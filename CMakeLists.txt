@@ -48,6 +48,14 @@ pkg_check_modules(libraries
 		opencv4
 )
 
+# Ubuntu 20.04's opencv has old include directories.
+get_target_property(INC PkgConfig::libraries INTERFACE_INCLUDE_DIRECTORIES)
+list(REMOVE_ITEM INC "/usr/include/opencv4/opencv")
+set_target_properties(PkgConfig::libraries
+		PROPERTIES
+		INTERFACE_INCLUDE_DIRECTORIES "${INC}"
+)
+
 # Linking
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
