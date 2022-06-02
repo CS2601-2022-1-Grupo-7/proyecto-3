@@ -14,27 +14,51 @@
 // You should have received a copy of the GNU General Public License
 // along with hello.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <cstdlib>
+#include <getopt.h>
 #include <iostream>
 
 #include "arguments.hpp"
-#include "mlp.hpp"
 
-int main(int argc, char** argv) {
-	arguments args(argc, argv);
+void arguments::usage(int exit_code) const
+{
+	std::cout
+		<< "Usage: " << argv[0] << " PATH\n"
+		<< "\t-h, --help Show this help\n"
+		;
 
-	std::cout << args.dataset_path << '\n';
+	exit(exit_code);
+}
 
-	MatrixXd m = MatrixXd::Random(3,3);
-	std::cout << m << '\n';
-	MLP mlp({m});
-	VectorXd Shk(3);
-	VectorXd So(3);
-	VectorXd Sd(3);
-	Shk << 1, 2, 3;
-	So << 2, 2, 2;
-	Sd << 2, 3, 4;
+void arguments::parse()
+{
+	if(argc < 2)
+		usage(EXIT_FAILURE);
 
-	std::cout << mlp.forward(Shk) << '\n';
-	std::cout << m.rows() << '\n';
-	mlp.backward(10, 0.5, mlp.forward(So), mlp.forward(Sd), mlp.forward(Shk));
+	int c;
+
+	static const char shortopts[] = "h";
+	static const option options[] =
+	{
+		{"help",   no_argument,       nullptr, 'h'},
+		{nullptr,  0,                 nullptr, 0},
+	};
+
+	while((c = getopt_long(argc, argv, shortopts, options, nullptr)) != -1)
+	{
+		switch(c)
+		{
+			case 'h':
+				usage(EXIT_SUCCESS);
+
+			case '?':
+				exit(EXIT_FAILURE);
+
+			default:
+				usage(EXIT_FAILURE);
+		}
+	}
+
+	for(int i = optind; i < argc; i++)
+		dataset_path = argv[i];
 }

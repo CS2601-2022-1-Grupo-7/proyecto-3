@@ -14,27 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with hello.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
+#pragma once
 
-#include "arguments.hpp"
-#include "mlp.hpp"
+#include <filesystem>
 
-int main(int argc, char** argv) {
-	arguments args(argc, argv);
+namespace fs = std::filesystem;
 
-	std::cout << args.dataset_path << '\n';
+class arguments
+{
+private:
+	[[ noreturn ]]
+	void usage(int exit_code) const;
 
-	MatrixXd m = MatrixXd::Random(3,3);
-	std::cout << m << '\n';
-	MLP mlp({m});
-	VectorXd Shk(3);
-	VectorXd So(3);
-	VectorXd Sd(3);
-	Shk << 1, 2, 3;
-	So << 2, 2, 2;
-	Sd << 2, 3, 4;
+	int argc;
+	char** argv;
 
-	std::cout << mlp.forward(Shk) << '\n';
-	std::cout << m.rows() << '\n';
-	mlp.backward(10, 0.5, mlp.forward(So), mlp.forward(Sd), mlp.forward(Shk));
-}
+public:
+
+	fs::path dataset_path;
+	void parse();
+
+	arguments(int argc, char** argv):
+		argc(argc),
+		argv(argv)
+	{
+		parse();
+	}
+};
