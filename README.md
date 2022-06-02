@@ -4,6 +4,9 @@
 
 * `cmake`
 * `libeigen3-dev`
+* `libglew-dev`
+* `libopencv-dev`
+* `libvtk6-dev`
 
 ## Build
 ``` bash

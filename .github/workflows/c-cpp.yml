@@ -15,7 +15,12 @@ jobs:
     - uses: ammaraskar/gcc-problem-matcher@master
 
     - name: deps
-      run: sudo apt install g++-10 libeigen3-dev
+      run: sudo apt install
+        g++-10
+        libeigen3-dev
+        libglew-dev
+        libopencv-dev
+        libvtk6-dev
 
     - name: configure
       run: cmake

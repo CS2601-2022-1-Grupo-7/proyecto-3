@@ -45,6 +45,7 @@ add_subdirectory(pkg) # Packaging
 pkg_check_modules(libraries
 	REQUIRED IMPORTED_TARGET
 		eigen3
+		opencv4
 )
 
 # Linking
