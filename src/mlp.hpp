@@ -36,6 +36,7 @@ private:
 	MatrixXd derivada_ho(
 		const MatrixXd& w,
 		size_t k,
+		VectorXd& delta,
 		const VectorXd& So, // Output
 		const VectorXd& Sd, // Desired
 		const VectorXd& Shk // Hidden
@@ -45,9 +46,9 @@ private:
 	MatrixXd derivada_hh(
 		const MatrixXd& w,
 		size_t km1,
-		std::vector<VectorXd>& sigma,
+		VectorXd &delta,
 		const VectorXd& Shk, // Hidden
-		const VectorXd& Shkm1 // Hidden
+		const VectorXd& Shkm1 // Hidden	
 		);
 
 public:
