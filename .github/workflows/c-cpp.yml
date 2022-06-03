@@ -18,9 +18,7 @@ jobs:
       run: sudo apt install
         g++-10
         libeigen3-dev
-        libglew-dev
-        libopencv-dev
-        libvtk6-dev
+        rapidjson-dev
 
     - name: configure
       run: cmake

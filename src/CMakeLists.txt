@@ -19,4 +19,5 @@ target_sources(${PROJECT_NAME}
 		arguments.cpp
 		main.cpp
 		mlp.cpp
+		parser.cpp
 )
