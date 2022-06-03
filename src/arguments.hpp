@@ -16,10 +16,8 @@
 
 #pragma once
 
-#include <filesystem>
+#include <cstdio>
 #include <vector>
-
-namespace fs = std::filesystem;
 
 class arguments
 {
@@ -38,8 +36,7 @@ public:
 		RELU
 	};
 
-	fs::path         dataset_path;
-	int              characteristics;
+	FILE*            json_file;
 	int              hidden_layers;
 	std::vector<int> neurons;
 	int              output_neurons;
@@ -49,8 +46,14 @@ public:
 
 	arguments(int argc, char** argv):
 		argc(argc),
-		argv(argv)
+		argv(argv),
+		json_file(nullptr)
 	{
 		parse();
+	}
+
+	~arguments()
+	{
+		fclose(json_file);
 	}
 };

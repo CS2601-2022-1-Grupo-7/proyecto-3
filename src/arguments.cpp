@@ -18,15 +18,15 @@
 #include <cstring>
 #include <getopt.h>
 #include <iostream>
+#include <unistd.h>
 
 #include "arguments.hpp"
 
 void arguments::usage(int exit_code) const
 {
 	std::cout
-		<< "Usage: " << argv[0] << " PATH\n"
+		<< "Usage: " << argv[0] << " JSON\n"
 		<< "\t-h, --help                 Show this help.\n"
-		<< "\t-c, --characteristics=N    Number of characteristics.\n"
 		<< "\t-l, --hidden-layers=N      Number of hidden layers.\n"
 		<< "\t-n, --neurons=N,...        Number of neurons in each layer.\n"
 		<< "\t-N, --output-neurons=N     Number of neurons in the output layer.\n"
@@ -45,11 +45,10 @@ void arguments::parse()
 
 	int c;
 
-	static const char shortopts[] = "hc:l:n:N:str";
+	static const char shortopts[] = "hl:n:N:str";
 	static const option options[] =
 	{
 		{"help",            no_argument,       nullptr, 'h'},
-		{"characteristics", required_argument, nullptr, 'c'},
 		{"hidden-layers",   required_argument, nullptr, 'l'},
 		{"neurons",         required_argument, nullptr, 'n'},
 		{"output-neurons",  required_argument, nullptr, 'N'},
@@ -65,10 +64,6 @@ void arguments::parse()
 		{
 			case 'h':
 				usage(EXIT_SUCCESS);
-
-			case 'c':
-				characteristics = atoi(optarg);
-				break;
 
 			case 'l':
 				hidden_layers = atoi(optarg);
@@ -111,6 +106,16 @@ void arguments::parse()
 		}
 	}
 
+	const char* json_path = nullptr;
+
 	for(int i = optind; i < argc; i++)
-		dataset_path = argv[i];
+		json_path = argv[i];
+
+	json_file = json_path ? fopen(json_path, "r"): fdopen(dup(STDIN_FILENO), "r");
+
+	if(!json_file)
+	{
+		perror(json_path);
+		exit(EXIT_FAILURE);
+	}
 }
