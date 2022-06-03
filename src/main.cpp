@@ -16,9 +16,42 @@
 
 #include <iostream>
 
+#include "arguments.hpp"
 #include "mlp.hpp"
 
-int main() {
+int main(int argc, char** argv) {
+	arguments args(argc, argv);
+
+	std::cout
+		<< "Path:" << args.dataset_path << '\n'
+		<< "Characteristics:" << args.characteristics << '\n'
+		<< "Hidden layers:" << args.hidden_layers << '\n'
+		<< "Hidden layers:\n"
+		;
+
+	for(auto i: args.neurons)
+		std::cout << '\t' << i << '\n';
+
+	std::cout
+		<< "Output neurons:" << args.output_neurons << '\n'
+		<< "Activation function: "
+		;
+
+	switch (args.activation)
+	{
+		case arguments::type::RELU:
+			std::cout << "RELU\n";
+			break;
+
+		case arguments::type::SIGMOID:
+			std::cout << "Sigmoid\n";
+			break;
+
+		case arguments::type::TANH:
+			std::cout << "Tanh\n";
+			break;
+	}
+
 	MatrixXd m = MatrixXd::Random(3,3);
 	std::cout << m << '\n';
 	MLP mlp({m});
