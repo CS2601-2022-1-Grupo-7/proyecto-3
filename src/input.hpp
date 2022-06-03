@@ -16,19 +16,9 @@
 
 #pragma once
 
-#include <cstdio>
+#include <Eigen/Dense>
 
-#include "input.hpp"
-
-class parser
+/// MLP's input.
+class input
 {
-private:
-	FILE* json_file;
-
-public:
-	parser(FILE* json_file):
-		json_file(json_file){};
-
-	input parse();
 };
-

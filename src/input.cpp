@@ -14,21 +14,4 @@
 // You should have received a copy of the GNU General Public License
 // along with hello.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-
-#include <cstdio>
-
 #include "input.hpp"
-
-class parser
-{
-private:
-	FILE* json_file;
-
-public:
-	parser(FILE* json_file):
-		json_file(json_file){};
-
-	input parse();
-};
-

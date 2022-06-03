@@ -17,6 +17,7 @@
 target_sources(${PROJECT_NAME}
 	PRIVATE
 		arguments.cpp
+		input.cpp
 		main.cpp
 		mlp.cpp
 		parser.cpp

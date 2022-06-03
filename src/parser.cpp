@@ -17,3 +17,9 @@
 #include <rapidjson/filereadstream.h>
 
 #include "parser.hpp"
+
+input parser::parse()
+{
+	// TODO
+	return input();
+}
