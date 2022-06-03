@@ -37,7 +37,7 @@ MatrixXd MLP::derivada_ho(
 	delta.resize(w.cols());
 	MatrixXd d = w;
 	for(size_t i = 0; i < w.cols(); i++){
-		delta(i) = (So(i)-Sd(i))*So(i)*(1.0-Sd(i));
+		delta(i) = (So(i)-Sd(i))*So(i)*(1.0-So(i));
 	}
 
 	for(size_t i = 0; i < w.rows(); i++){
