@@ -27,39 +27,57 @@ VectorXd MLP::activation(VectorXd Net){//funcion de activacion
 MatrixXd MLP::derivada_ho(
 	const MatrixXd& w,
 	size_t k,
+	VectorXd& delta,
 	const VectorXd& So, // Output
 	const VectorXd& Sd, // Desired
 	const VectorXd& Shk // Hidden
 	)
 {
+
+	delta.resize(w.cols());
 	MatrixXd d = w;
+	for(size_t i = 0; i < w.cols(); i++){
+		delta(i) = (So(i)-Sd(i))*So(i)*(1.0-Sd(i));
+	}
+
 	for(size_t i = 0; i < w.rows(); i++){
 		for(size_t j = 0; j < w.cols(); j++){
-			d(i, j) = (So(j)-Sd(j))*So(j)*(1.0-Sd(j))*Shk(i);
+			d(i,j) = delta(j)*Shk(i);
 		}
 	}
-	std::cout << "d:" << std::endl;
-	std::cout << d << std::endl;
+
+	// std::cout << "d:" << std::endl;
+	// std::cout << d << std::endl;
 	return d;
 }
 
 MatrixXd MLP::derivada_hh(
 	const MatrixXd& w,
 	size_t km1,
-	std::vector<VectorXd>& sigma,
+	VectorXd &delta,
 	const VectorXd& Shk, // Hidden
 	const VectorXd& Shkm1 // Hidden
 	)
-{
+{	
+	
+	delta.resize(w.cols());
+	VectorXd tmp = delta;
 	MatrixXd d = w;
+
+	for(size_t j = 0; j < w.cols(); j++){
+		for(size_t k = 0; k < w.rows(); k++){
+			tmp(j) += delta(k)*w(j,k);
+		}
+		tmp(j) = tmp(j)*Shk(j)*(1.0-Shk(j)); 
+	}
+
 	for(size_t i = 0; i < w.rows(); i++){
 		for(size_t j = 0; j < w.cols(); j++){
-			// TODO
-	/*
-
-	*/
+			d(i,j) = tmp(j)*Shkm1(i);			
 		}
 	}
+
+	delta = tmp;
 	return d;
 }
 
@@ -75,15 +93,19 @@ VectorXd MLP::forward(VectorXd C)
 void MLP::backward(size_t epoch, double alpha, VectorXd So, VectorXd Sd, VectorXd Shk)
 {
 	//
-	std::vector<VectorXd> sigma;
+	VectorXd delta;
+	std::vector<MatrixXd> WT = W;
 	while(epoch--)
 	{
 		for(ssize_t i = W.size()-1; i >= 0; i--)
 		{
-			//if(i == W.size() -1)
-			//	W[i] -= alpha*derivada_ho(W[i], i, So, Sd, Shk);
-			//else
-			//	W[i] -= alpha*derivada_hh(W[i], i, sigma);
+			if(i == W.size() -1)
+				WT[i] -= alpha*derivada_ho(W[i], i, delta, So, Sd, Shk);
+			else{
+				WT[i] -= alpha*derivada_hh(W[i], i, delta, Shk,So);
+			}
 		}
+
+		W = WT;
 	}
 }
