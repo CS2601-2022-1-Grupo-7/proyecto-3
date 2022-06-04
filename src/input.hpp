@@ -16,9 +16,23 @@
 
 #pragma once
 
+#include <vector>
+
 #include <Eigen/Dense>
 
+using Eigen::VectorXd;
+
 /// MLP's input.
-class input
+struct input
 {
+	std::vector<VectorXd> train_X;
+	std::vector<int>      train_y;
+
+	std::vector<VectorXd> test_X;
+	std::vector<int>      test_y;
+
+	std::vector<VectorXd> validate_X;
+	std::vector<int>      validate_y;
+
+	input(FILE* json_file);
 };

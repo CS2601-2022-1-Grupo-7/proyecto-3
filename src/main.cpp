@@ -17,10 +17,13 @@
 #include <iostream>
 
 #include "arguments.hpp"
+#include "input.hpp"
 #include "mlp.hpp"
 
 int main(int argc, char** argv) {
 	arguments args(argc, argv);
+
+	input i(args.json_file);
 
 	MatrixXd m = MatrixXd::Random(3,3);
 	std::cout << m << '\n';

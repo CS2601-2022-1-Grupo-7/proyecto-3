@@ -54,6 +54,11 @@ target_link_libraries(${PROJECT_NAME}
 		PkgConfig::libraries
 )
 
+target_compile_definitions(${PROJECT_NAME}
+	PRIVATE
+		RAPIDJSON_HAS_STDSTRING=1
+)
+
 # Default flags
 if(UNIX)
 	if(NOT (DEFINED ENV{CFLAGS} OR CMAKE_C_FLAGS))

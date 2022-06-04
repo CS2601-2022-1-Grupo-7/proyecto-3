@@ -20,5 +20,4 @@ target_sources(${PROJECT_NAME}
 		input.cpp
 		main.cpp
 		mlp.cpp
-		parser.cpp
 )
