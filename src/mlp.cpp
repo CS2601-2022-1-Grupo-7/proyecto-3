@@ -50,8 +50,8 @@ MatrixXd MLP::derivada_hh(
 	const VectorXd& Shk, // Hidden
 	const VectorXd& Shkm1 // Hidden
 	)
-{	
-	
+{
+
 	delta.resize(w.cols());
 	VectorXd tmp = delta;
 	MatrixXd d = w;
@@ -60,12 +60,12 @@ MatrixXd MLP::derivada_hh(
 		for(size_t k = 0; k < w.rows(); k++){
 			tmp(j) += delta(k)*w(j,k);
 		}
-		tmp(j) = tmp(j)*Shk(j)*(1.0-Shk(j)); 
+		tmp(j) = tmp(j)*Shk(j)*(1.0-Shk(j));
 	}
 
 	for(size_t i = 0; i < w.rows(); i++){
 		for(size_t j = 0; j < w.cols(); j++){
-			d(i,j) = tmp(j)*Shkm1(i);			
+			d(i,j) = tmp(j)*Shkm1(i);
 		}
 	}
 
@@ -92,6 +92,15 @@ VectorXd MLP::forward(VectorXd C)
 		C = activation(C.transpose()*w);
 	}
 	return softMax(C);
+}
+
+VectorXd MLP::semi_forward(VectorXd C)
+{
+	for(size_t i = 0; i < W.size()-1; i++)
+	{
+		C = activation(C.transpose()*W[i]);
+	}
+	return C;
 }
 
 void MLP::backward(size_t epoch, double alpha, VectorXd So, VectorXd Sd, VectorXd Shk)

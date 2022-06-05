@@ -62,6 +62,7 @@ public:
 		std::function<VectorXd(const VectorXd&)> activation);
 
 	VectorXd forward(VectorXd C);
+	VectorXd semi_forward(VectorXd C);
 
 	void backward(size_t epoch, double alpha, VectorXd So, VectorXd Sd, VectorXd Shk);
 
