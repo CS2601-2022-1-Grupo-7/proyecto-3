@@ -36,11 +36,11 @@ public:
 		RELU
 	};
 
-	FILE*            json_file;
-	int              hidden_layers;
-	std::vector<int> neurons;
-	int              output_neurons;
-	type             activation;
+	FILE*               json_file;
+	size_t              hidden_layers;
+	std::vector<size_t> neurons;
+	size_t              output_neurons;
+	type                activation;
 
 	void parse();
 

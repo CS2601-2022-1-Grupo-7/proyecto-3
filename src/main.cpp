@@ -65,14 +65,17 @@ std::function<VectorXd(const VectorXd&)> set_activation(arguments::type t)
 }
 
 int main(int argc, char** argv) {
+
 	arguments args(argc, argv);
+	input     i(args.json_file);
 
-	input i(args.json_file);
+	MLP mlp(i.test_X.front().size(),
+		args.hidden_layers,
+		args.output_neurons,
+		args.neurons,
+		set_activation(args.activation)
+	);
 
-	MatrixXd m = MatrixXd::Random(3,3);
-	std::cout << m << '\n' << '\n';
-
-	MLP mlp({m}, set_activation(args.activation));
 	VectorXd Shk(3);
 	VectorXd So(3);
 	VectorXd Sd(3);

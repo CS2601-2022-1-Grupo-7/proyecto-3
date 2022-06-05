@@ -101,3 +101,15 @@ void MLP::backward(size_t epoch, double alpha, VectorXd So, VectorXd Sd, VectorX
 		W = WT;
 	}
 }
+
+MLP::MLP(size_t input_characteristics,
+		size_t hidden_layers,
+		size_t output_neurons,
+		const std::vector<size_t>& neurons,
+		std::function<VectorXd(const VectorXd&)> activation):
+		activation(activation)
+{
+	// TODO
+	MatrixXd m = MatrixXd::Random(3,3);
+	std::cout << m << '\n' << '\n';
+};

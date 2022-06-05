@@ -53,14 +53,13 @@ private:
 		);
 
 public:
-	MLP(const std::vector<MatrixXd>& W,
-		std::function<VectorXd(const VectorXd&)> activation):
-		W(W),
-		activation(activation)
-	{};
+	MLP(size_t input_characteristics,
+		size_t hidden_layers,
+		size_t output_neurons,
+		const std::vector<size_t>& neurons,
+		std::function<VectorXd(const VectorXd&)> activation);
 
 	VectorXd forward(VectorXd C);
-
 
 	void backward(size_t epoch, double alpha, VectorXd So, VectorXd Sd, VectorXd Shk);
 
