@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import cv2
 import numpy as np
 import json
@@ -39,7 +41,7 @@ files_names = os.listdir(img_path)
 dataset_butterfly = []
 dataset_butterfly_names = []
 
-haar = 2
+haar = 6
 
 for file in files_names:
   result = transfHaar(img_path + '/' + file, haar)
@@ -79,5 +81,5 @@ for index, row in validate.iterrows():
 dictF = {'trainX': trainX, 'trainY': trainY, 'testX': testX, 'testY': testY, 'validateX': validateX, 'validateY': validateY}
 json_final = json.dumps(dictF)
 
-with open('json_data.json', 'w') as outfile:
+with open('/dev/stdout', 'w') as outfile:
   outfile.write(json_final)

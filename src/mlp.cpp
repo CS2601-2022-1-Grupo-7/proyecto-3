@@ -16,14 +16,6 @@
 
 #include "mlp.hpp"
 
-VectorXd MLP::activation(VectorXd Net){//funcion de activacion
-	for(size_t i = 0; i < Net.size(); i++)
-	{
-		Net(i) = 1.0/(1.0+exp(-Net(i)));
-	}
-	return Net;
-}
-
 MatrixXd MLP::derivada_ho(
 	const MatrixXd& w,
 	size_t k,

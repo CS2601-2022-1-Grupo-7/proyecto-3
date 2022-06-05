@@ -17,9 +17,10 @@
 #pragma once
 
 #include <cmath>
+#include <functional>
 #include <iostream>
 #include <vector>
-#include <vector>
+
 #include <Eigen/Dense>
 
 using Eigen::MatrixXd;
@@ -31,7 +32,7 @@ private:
 	// Matrices http: https://eigen.tuxfamily.org/index.php?title=Main_Page
 	std::vector<MatrixXd> W;
 
-	VectorXd activation(VectorXd Net);
+	std::function<VectorXd(const VectorXd&)> activation;
 
 	MatrixXd derivada_ho(
 		const MatrixXd& w,
@@ -48,12 +49,14 @@ private:
 		size_t km1,
 		VectorXd &delta,
 		const VectorXd& Shk, // Hidden
-		const VectorXd& Shkm1 // Hidden	
+		const VectorXd& Shkm1 // Hidden
 		);
 
 public:
-	MLP(const std::vector<MatrixXd>& W):
-		W(W)
+	MLP(const std::vector<MatrixXd>& W,
+		std::function<VectorXd(const VectorXd&)> activation):
+		W(W),
+		activation(activation)
 	{};
 
 	VectorXd forward(VectorXd C);
