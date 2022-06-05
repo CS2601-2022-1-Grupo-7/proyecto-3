@@ -64,7 +64,7 @@ files_names = os.listdir(img_path)
 dataset_butterfly = []
 dataset_butterfly_names = []
 
-haar = 10
+haar = 6
 
 for file in files_names:
   result = transfHaar(img_path + '/' + file, haar)
