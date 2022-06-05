@@ -53,7 +53,7 @@ private:
 		);
 
 public:
-	MLP(size_t input_characteristics,
+	MLP(size_t features,
 		size_t hidden_layers,
 		size_t output_neurons,
 		const std::vector<size_t>& neurons,

@@ -102,7 +102,7 @@ void MLP::backward(size_t epoch, double alpha, VectorXd So, VectorXd Sd, VectorX
 	}
 }
 
-MLP::MLP(size_t input_characteristics,
+MLP::MLP(size_t features,
 		size_t hidden_layers,
 		size_t output_neurons,
 		const std::vector<size_t>& neurons,
