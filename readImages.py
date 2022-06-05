@@ -20,43 +20,43 @@ def transfHaar(path, x):
   LL = LL.flatten()
   return LL
 
-def draw(arr):
-  n = int((len(arr))**0.5)
-  data = np.zeros((n, n))
-  for i in range(n):
-    for j in range(n):
-      data[i][j] = arr[i*n+j]
-  fig = plt.figure(figsize=(6, 1.5))
-  for i, a in enumerate([data]):
-      ax = fig.add_subplot(1, 4, i + 1)
-      ax.imshow(a, interpolation="nearest", cmap=plt.cm.gray)
-      ax.set_xticks([])
-      ax.set_yticks([])
-  fig.tight_layout()
-  plt.show()
+# def draw(arr):
+#   n = int((len(arr))**0.5)
+#   data = np.zeros((n, n))
+#   for i in range(n):
+#     for j in range(n):
+#       data[i][j] = arr[i*n+j]
+#   fig = plt.figure(figsize=(6, 1.5))
+#   for i, a in enumerate([data]):
+#       ax = fig.add_subplot(1, 4, i + 1)
+#       ax.imshow(a, interpolation="nearest", cmap=plt.cm.gray)
+#       ax.set_xticks([])
+#       ax.set_yticks([])
+#   fig.tight_layout()
+#   plt.show()
 
-def class_butterfly(file):
-  if (file == "001"):
-    class_assign = "1000000000"
-  elif (file == "002"):
-    class_assign = "0100000000"
-  elif (file == "003"):
-    class_assign = "0010000000"
-  elif (file == "004"):
-    class_assign = "0001000000"
-  elif (file == "005"):
-    class_assign = "0000100000"
-  elif (file == "006"):
-    class_assign = "0000010000"
-  elif (file == "007"):
-    class_assign = "0000001000"
-  elif (file == "008"):
-    class_assign = "0000000100"
-  elif (file == "009"):
-    class_assign = "0000000010"
-  elif (file == "010"):
-    class_assign = "0000000001"
-  return class_assign
+# def class_butterfly(file):
+#   if (file == "001"):
+#     class_assign = "1000000000"
+#   elif (file == "002"):
+#     class_assign = "0100000000"
+#   elif (file == "003"):
+#     class_assign = "0010000000"
+#   elif (file == "004"):
+#     class_assign = "0001000000"
+#   elif (file == "005"):
+#     class_assign = "0000100000"
+#   elif (file == "006"):
+#     class_assign = "0000010000"
+#   elif (file == "007"):
+#     class_assign = "0000001000"
+#   elif (file == "008"):
+#     class_assign = "0000000100"
+#   elif (file == "009"):
+#     class_assign = "0000000010"
+#   elif (file == "010"):
+#     class_assign = "0000000001"
+#   return class_assign
 
 img_path = sys.argv[1]
 
@@ -81,7 +81,7 @@ for index, row in train.iterrows():
   key = key.tolist()
   value = row['class']
   trainX.append(key)
-  trainY.append(class_butterfly(value))
+  trainY.append(value)
 
 testX = []
 testY = []
@@ -90,7 +90,7 @@ for index, row in test.iterrows():
   key = key.tolist()
   value = row['class']
   testX.append(key)
-  testY.append(class_butterfly(value))
+  testY.append(value)
 
 validateX = []
 validateY = []
@@ -99,7 +99,7 @@ for index, row in validate.iterrows():
   key = key.tolist()
   value = row['class']
   validateX.append(key)
-  validateY.append(class_butterfly(value))
+  validateY.append(value)
 
 dictF = {'trainX': trainX, 'trainY': trainY, 'testX': testX, 'testY': testY, 'validateX': validateX, 'validateY': validateY}
 json_final = json.dumps(dictF)
