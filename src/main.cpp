@@ -76,13 +76,15 @@ int main(int argc, char** argv) {
 		set_activation(args.activation)
 	);
 
-	VectorXd Shk(3);
+
+
+	// VectorXd Shk(3);
 	VectorXd So(3);
 	VectorXd Sd(3);
-	Shk << 1, 2, 3;
+	// Shk << 1, 2, 3;
 	So << 2, 2, 2;
 	Sd << 2, 3, 4;
 
-	std::cout << mlp.forward(Shk) << '\n';
-	mlp.backward(10, 0.5, mlp.forward(So), mlp.forward(Sd), mlp.forward(Shk));
+	std::cout << mlp.forward(i.test_X.front()) << '\n';
+	// mlp.backward(10, 0.5, mlp.forward(So), mlp.forward(Sd), mlp.forward(Shk));
 }

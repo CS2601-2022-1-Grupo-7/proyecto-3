@@ -73,13 +73,25 @@ MatrixXd MLP::derivada_hh(
 	return d;
 }
 
+VectorXd MLP::softMax(VectorXd So){
+	VectorXd result(So.size());
+	double sum=0;
+	for(int i=0; i<So.size(); i++){
+		sum+=exp(So(i));
+	}
+	for(int i=0; i<So.size(); i++){
+		result(i)=exp(So(i))/sum;
+	}
+	return result;
+}
+
 VectorXd MLP::forward(VectorXd C)
 {
 	for(const auto& w: W)
 	{
 		C = activation(C.transpose()*w);
 	}
-	return C;
+	return softMax(C);
 }
 
 void MLP::backward(size_t epoch, double alpha, VectorXd So, VectorXd Sd, VectorXd Shk)
@@ -109,7 +121,19 @@ MLP::MLP(size_t features,
 		std::function<VectorXd(const VectorXd&)> activation):
 		activation(activation)
 {
-	// TODO
-	MatrixXd m = MatrixXd::Random(3,3);
-	std::cout << m << '\n' << '\n';
+	if (hidden_layers != 0){
+		MatrixXd m = MatrixXd::Random(features,neurons[0]);
+		W.push_back(m);
+		for (int i=0; i<hidden_layers-1; i++){
+			int row = neurons[i];
+			int col = neurons[i+1];
+			m = MatrixXd::Random(row, col);
+			W.push_back(m);
+		}
+		m = MatrixXd::Random(neurons[neurons.size()-1],output_neurons);
+		W.push_back(m);
+	}else{
+		MatrixXd m = MatrixXd::Random(features, output_neurons);
+		W.push_back(m);
+	}
 };

@@ -32,6 +32,8 @@ private:
 	// Matrices http: https://eigen.tuxfamily.org/index.php?title=Main_Page
 	std::vector<MatrixXd> W;
 
+	VectorXd softMax(VectorXd So);
+
 	std::function<VectorXd(const VectorXd&)> activation;
 
 	MatrixXd derivada_ho(
