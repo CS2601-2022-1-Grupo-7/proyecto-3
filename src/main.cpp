@@ -76,9 +76,9 @@ int main(int argc, char** argv) {
 		set_activation(args.activation)
 	);
 
-	for(const auto& x: i.test_X)
+	for(size_t ii = 0; ii < i.test_X.size(); ii++)
 	{
-		std::cout << mlp.forward(x) << '\n';
-		mlp.backward(10, 0.5, x, i.test_y.front());
+		std::cout << mlp.forward(i.test_X[ii]) << '\n';
+		mlp.backward(10, 0.5, i.test_X[ii], i.test_y[ii]);
 	}
 }
