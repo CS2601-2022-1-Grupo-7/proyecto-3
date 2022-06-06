@@ -78,7 +78,6 @@ int main(int argc, char** argv) {
 
 	for(size_t ii = 0; ii < i.test_X.size(); ii++)
 	{
-		std::cout << mlp.forward(i.test_X[ii]) << '\n';
 		mlp.backward(10, 0.5, i.test_X[ii], i.test_y[ii]);
 	}
 }

@@ -26,10 +26,10 @@ MatrixXd MLP::derivada_ho(
 	)
 {
 
-	delta.resize(w.cols());
+	delta.resize(So.size());
 	MatrixXd d = w;
-	for(size_t i = 0; i < w.cols(); i++){
-		delta(i) = (So(i)-Sd(i))*So(i)*(1.0-So(i));
+	for(size_t i = 0; i < So.size(); i++){
+		delta(i) = ((So(i)-Sd(i))*So(i)*(1.0-So(i)));
 	}
 
 	for(size_t i = 0; i < w.rows(); i++){
@@ -52,15 +52,15 @@ MatrixXd MLP::derivada_hh(
 	)
 {
 
-	delta.resize(w.cols());
-	VectorXd tmp = delta;
+	VectorXd tmp = VectorXd::Zero(w.cols());
 	MatrixXd d = w;
 
 	for(size_t j = 0; j < w.cols(); j++){
-		for(size_t k = 0; k < w.rows(); k++){
-			tmp(j) += delta(k)*w(j,k);
+		double valTmp = 0.0;
+		for(size_t k = 0; k < delta.size(); k++){
+			valTmp += delta(k)*w(j,k);
 		}
-		tmp(j) = tmp(j)*Shk(j)*(1.0-Shk(j));
+		tmp(j) = valTmp*Shk(j)*(1.0-Shk(j));
 	}
 
 	for(size_t i = 0; i < w.rows(); i++){
@@ -69,6 +69,7 @@ MatrixXd MLP::derivada_hh(
 		}
 	}
 
+	delta.resize(tmp.size());
 	delta = tmp;
 	return d;
 }
@@ -85,11 +86,12 @@ VectorXd MLP::softMax(VectorXd So){
 	return result;
 }
 
-VectorXd MLP::forward(VectorXd C)
+VectorXd MLP::forward(VectorXd C, std::vector<VectorXd>& Sh)
 {
 	for(const auto& w: W)
 	{
 		C = activation(C.transpose()*w);
+		Sh.push_back(C);
 	}
 	return softMax(C);
 }
@@ -108,20 +110,24 @@ VectorXd class2vector(int _class, size_t n)
 
 void MLP::backward(size_t epoch, double alpha, VectorXd x, int y)
 {
-	VectorXd So = forward(x);
+	std::vector<VectorXd> Sh;
+	VectorXd So = forward(x, Sh);
 	VectorXd Sd = class2vector(y, W.back().cols());
-	std::vector<VectorXd> Sh;// TODO
+	
 
-	VectorXd delta;
+	VectorXd delta; //cambiar
 	std::vector<MatrixXd> WT = W;
 	while(epoch--)
 	{
-		for(ssize_t i = W.size()-1; i >= 0; i--)
+		for(ssize_t i = W.size()-2; i >= 0; i--)
 		{
-			if(i == W.size() -1)
-				WT[i] -= alpha*derivada_ho(W[i], i, delta, So, Sd, Sh[i]);
+
+			//output,desired,hk -> derivada_ho
+			//hk,hkm1 -> derivada_hh 
+			if(i == W.size() -2)
+				WT[i] -= alpha*derivada_ho(W[i], i, delta, Sh[i+1], Sd, Sh[i]);
 			else{
-				WT[i] -= alpha*derivada_hh(W[i], i, delta, Sh[i], So);
+				WT[i] -= alpha*derivada_hh(W[i], i, delta, Sh[i+1], Sh[i]);
 			}
 		}
 

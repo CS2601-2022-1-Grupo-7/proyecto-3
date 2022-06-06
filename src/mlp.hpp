@@ -61,7 +61,7 @@ public:
 		const std::vector<size_t>& neurons,
 		std::function<VectorXd(const VectorXd&)> activation);
 
-	VectorXd forward(VectorXd C);
+	VectorXd forward(VectorXd C, std::vector<VectorXd>& Sh);
 
 	void backward(size_t epoch, double alpha, VectorXd x, int y);
 
