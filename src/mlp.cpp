@@ -20,16 +20,17 @@ MatrixXd MLP::derivada_ho(
 	const MatrixXd& w,
 	size_t k,
 	VectorXd& delta,
-	const VectorXd& So, // Output
+	const VectorXd& So, // Output --- Softmax Probabilidads
 	const VectorXd& Sd, // Desired
-	const VectorXd& Shk // Hidden
+	const VectorXd& Shk // Hidden --- Softmax Output
 	)
 {
 
 	delta.resize(So.size());
 	MatrixXd d(w.rows(), w.cols());
 	for(size_t i = 0; i < So.size(); i++){
-		delta(i) = ((So(i)-Sd(i))*So(i)*(1.0-So(i)));
+		// delta(i) = ((So(i)-Sd(i))*So(i)*(1.0-So(i)));
+		delta(i) = So[i] - Sd[i];
 	}
 
 	for(size_t i = 0; i < w.rows(); i++){
@@ -85,15 +86,16 @@ VectorXd MLP::softMax(VectorXd So){
 	return result;
 }
 
-VectorXd MLP::forward(VectorXd C, std::vector<VectorXd>& Sh)
+void MLP::forward(VectorXd C)
 {
-	Sh.push_back(C);
+	this->Sh.push_back(C);
 	for(const auto& w: W)
 	{
 		C = activation(C.transpose()*w);
-		Sh.push_back(C);
+		this->Sh.push_back(C);
 	}
-	return softMax(C);
+
+	this->Sh.push_back(softMax(C));
 }
 
 VectorXd class2vector(int _class, size_t n)
@@ -108,33 +110,69 @@ VectorXd class2vector(int _class, size_t n)
 	return v;
 }
 
-void MLP::backward(size_t epoch, double alpha, VectorXd x, int y)
+void calc_E(const VectorXd& Sd, const VectorXd& So)
 {
-	std::vector<VectorXd> Sh;
-	VectorXd So = forward(x, Sh);
+	double E = 0.0;
+
+	for(size_t i = 0; i < So.size(); i++)
+	{
+		E += (Sd[i]*log(So[i]));
+	}
+	std::cout<<-1.0*E<<std::endl;
+}
+
+
+void MLP::training(size_t epoch, double alpha, VectorXd x, int y){
+	
 	VectorXd Sd = class2vector(y, W.back().cols());
+
+
+	forward(x);
+
+	std::cout<<"Error before: ";
+	calc_E(Sd, Sh.back());
+
+	while(epoch--){
+
+		backward(alpha, y);
+
+		forward(x);
+
+	}
+
+	std::cout<<"Error after: ";
+	calc_E(Sd, Sh.back());
+
+}
+
+
+
+
+void MLP::backward(double alpha, int y)
+{
+	VectorXd Sd = class2vector(y, W.back().cols());
+
+	// std::cout<<"Sd: "<<Sd<<std::endl;
 	
 
 	VectorXd delta(W[W.size()-1].cols()); //cambiar
 	std::vector<MatrixXd> WT = W;
-	while(epoch--)
+
+	for(ssize_t i = W.size()-1; i >= 0; i--)
 	{
-		for(ssize_t i = W.size()-1; i >= 0; i--)
-		{
 
-			//output,desired,hk -> derivada_ho
-			//hk,hkm1 -> derivada_hh 
+		//output,desired,hk -> derivada_ho
+		//hk,hkm1 -> derivada_hh 
 
-			if(i == W.size() -1){
-				WT[i] -= alpha*derivada_ho(W[i], i, delta, Sh[i+1], Sd, Sh[i]);
-			}
-			else{
-				WT[i] -= alpha*derivada_hh(W[i], i, delta, Sh[i+1], Sh[i]);
-			}
+		if(i == W.size() -1){
+			WT[i] -= alpha*derivada_ho(W[i], i, delta, Sh[i+2], Sd, Sh[i+1]);
 		}
-
-		W = WT;
+		else{
+			WT[i] -= alpha*derivada_hh(W[i], i, delta, Sh[i+1], Sh[i]);
+		}
 	}
+
+	W = WT;
 }
 
 MLP::MLP(size_t features,

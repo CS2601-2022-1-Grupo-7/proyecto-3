@@ -78,10 +78,11 @@ int main(int argc, char** argv) {
 
 	std::vector<VectorXd> Sh;
 
-	for(size_t ii = 0; ii < i.test_X.size(); ii++)
+	for(size_t ii = 0; ii < 1; ii++)
 	{
-		// std::cout << mlp.forward(i.test_X[ii], Sh) << std::endl;
-		// mlp.forward(i.test_X[ii], Sh);
-		mlp.backward(10, 0.5, i.test_X[ii], i.test_y[ii]);
+		//std::cout << mlp.forward(i.test_X[ii], Sh) << std::endl;
+		// mlp.forward(i.test_X[ii], Sh); i.test_X.size()
+		mlp.training(100, 0.5, i.test_X[ii], i.test_y[ii]);
+		std::cout<<std::endl;
 	}
 }

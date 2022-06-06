@@ -31,6 +31,7 @@ class MLP
 private:
 	// Matrices http: https://eigen.tuxfamily.org/index.php?title=Main_Page
 	std::vector<MatrixXd> W;
+	std::vector<VectorXd> Sh;
 
 	VectorXd softMax(VectorXd So);
 
@@ -61,8 +62,10 @@ public:
 		const std::vector<size_t>& neurons,
 		std::function<VectorXd(const VectorXd&)> activation);
 
-	VectorXd forward(VectorXd C, std::vector<VectorXd>& Sh);
+	void forward(VectorXd C);
 
-	void backward(size_t epoch, double alpha, VectorXd x, int y);
+	void backward(double alpha, int y);
+
+	void training(size_t epoch, double alpha, VectorXd x, int y);
 
 };
