@@ -64,18 +64,6 @@ std::function<VectorXd(const VectorXd&)> set_activation(arguments::type t)
 	}
 }
 
-VectorXd class2vector(int _class, size_t n)
-{
-	VectorXd v(n);
-
-	for(size_t i = 0; i < n; i++)
-	{
-		v[i] = (int)i == _class-1 ? 1 : 0;
-	}
-
-	return v;
-}
-
 int main(int argc, char** argv) {
 
 	arguments args(argc, argv);
@@ -91,6 +79,6 @@ int main(int argc, char** argv) {
 	for(const auto& x: i.test_X)
 	{
 		std::cout << mlp.forward(x) << '\n';
-		mlp.backward(10, 0.5, mlp.forward(x), class2vector(i.test_y.front(), args.output_neurons), mlp.semi_forward(x));
+		mlp.backward(10, 0.5, x, i.test_y.front());
 	}
 }

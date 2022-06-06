@@ -94,18 +94,24 @@ VectorXd MLP::forward(VectorXd C)
 	return softMax(C);
 }
 
-VectorXd MLP::semi_forward(VectorXd C)
+VectorXd class2vector(int _class, size_t n)
 {
-	for(size_t i = 0; i < W.size()-1; i++)
+	VectorXd v(n);
+
+	for(size_t i = 0; i < n; i++)
 	{
-		C = activation(C.transpose()*W[i]);
+		v[i] = (int)i == _class-1 ? 1 : 0;
 	}
-	return C;
+
+	return v;
 }
 
-void MLP::backward(size_t epoch, double alpha, VectorXd So, VectorXd Sd, VectorXd Shk)
+void MLP::backward(size_t epoch, double alpha, VectorXd x, int y)
 {
-	//
+	VectorXd So = forward(x);
+	VectorXd Sd = class2vector(y, W.back().cols());
+	std::vector<VectorXd> Sh;// TODO
+
 	VectorXd delta;
 	std::vector<MatrixXd> WT = W;
 	while(epoch--)
@@ -113,9 +119,9 @@ void MLP::backward(size_t epoch, double alpha, VectorXd So, VectorXd Sd, VectorX
 		for(ssize_t i = W.size()-1; i >= 0; i--)
 		{
 			if(i == W.size() -1)
-				WT[i] -= alpha*derivada_ho(W[i], i, delta, So, Sd, Shk);
+				WT[i] -= alpha*derivada_ho(W[i], i, delta, So, Sd, Sh[i]);
 			else{
-				WT[i] -= alpha*derivada_hh(W[i], i, delta, Shk,So);
+				WT[i] -= alpha*derivada_hh(W[i], i, delta, Sh[i], So);
 			}
 		}
 
