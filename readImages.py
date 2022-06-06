@@ -8,6 +8,8 @@ import pywt
 import os
 import sys
 import pandas as pd
+from sklearn import preprocessing
+import codecs
 
 def transfHaar(path, x):  
   LL = cv2.imread(path)
@@ -35,28 +37,8 @@ def transfHaar(path, x):
 #   fig.tight_layout()
 #   plt.show()
 
-# def class_butterfly(file):
-#   if (file == "001"):
-#     class_assign = "1000000000"
-#   elif (file == "002"):
-#     class_assign = "0100000000"
-#   elif (file == "003"):
-#     class_assign = "0010000000"
-#   elif (file == "004"):
-#     class_assign = "0001000000"
-#   elif (file == "005"):
-#     class_assign = "0000100000"
-#   elif (file == "006"):
-#     class_assign = "0000010000"
-#   elif (file == "007"):
-#     class_assign = "0000001000"
-#   elif (file == "008"):
-#     class_assign = "0000000100"
-#   elif (file == "009"):
-#     class_assign = "0000000010"
-#   elif (file == "010"):
-#     class_assign = "0000000001"
-#   return class_assign
+def norm(vec):
+  return preprocessing.normalize([vec])
 
 img_path = sys.argv[1]
 
@@ -80,7 +62,7 @@ for index, row in train.iterrows():
   key = row['vect']
   key = key.tolist()
   value = row['class']
-  trainX.append(key)
+  trainX.append(norm(key).tolist()[0])
   trainY.append(value)
 
 testX = []
@@ -89,7 +71,7 @@ for index, row in test.iterrows():
   key = row['vect']
   key = key.tolist()
   value = row['class']
-  testX.append(key)
+  testX.append(norm(key).tolist()[0])
   testY.append(value)
 
 validateX = []
@@ -98,7 +80,7 @@ for index, row in validate.iterrows():
   key = row['vect']
   key = key.tolist()
   value = row['class']
-  validateX.append(key)
+  validateX.append(norm(key).tolist()[0])
   validateY.append(value)
 
 dictF = {'trainX': trainX, 'trainY': trainY, 'testX': testX, 'testY': testY, 'validateX': validateX, 'validateY': validateY}

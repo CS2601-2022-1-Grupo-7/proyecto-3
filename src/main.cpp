@@ -44,9 +44,6 @@ std::function<VectorXd(const VectorXd&)> set_activation(arguments::type t)
 					VectorXd Net = v;
 					for(size_t i = 0; i < (size_t)Net.size(); i++)
 					{
-						if (Net(i) < -354){
-							Net(i) = -354;
-						}
 						Net(i) = (1.0-exp(-2.0*Net(i)))/(1.0+exp(-2.0*Net(i)));
 					}
 					return Net;
@@ -83,7 +80,7 @@ int main(int argc, char** argv) {
 
 	for(size_t ii = 0; ii < i.test_X.size(); ii++)
 	{
-		//std::cout << mlp.forward(i.test_X[ii], Sh) << std::endl;
+		// std::cout << mlp.forward(i.test_X[ii], Sh) << std::endl;
 		// mlp.forward(i.test_X[ii], Sh);
 		mlp.backward(10, 0.5, i.test_X[ii], i.test_y[ii]);
 	}
