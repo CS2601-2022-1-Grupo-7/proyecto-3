@@ -27,7 +27,7 @@ MatrixXd MLP::derivada_ho(
 {
 
 	delta.resize(So.size());
-	MatrixXd d = w;
+	MatrixXd d(w.rows(), w.cols());
 	for(size_t i = 0; i < So.size(); i++){
 		delta(i) = ((So(i)-Sd(i))*So(i)*(1.0-So(i)));
 	}
@@ -52,13 +52,13 @@ MatrixXd MLP::derivada_hh(
 	)
 {
 
-	VectorXd tmp = VectorXd::Zero(w.cols());
-	MatrixXd d = w;
+	VectorXd tmp(w.cols());
+	MatrixXd d(w.rows(), w.cols());
 
 	for(size_t j = 0; j < w.cols(); j++){
 		double valTmp = 0.0;
 		for(size_t k = 0; k < delta.size(); k++){
-			valTmp += delta(k)*w(j,k);
+			valTmp += delta(k)*W[km1+1](j,k);
 		}
 		tmp(j) = valTmp*Shk(j)*(1.0-Shk(j));
 	}
@@ -69,7 +69,6 @@ MatrixXd MLP::derivada_hh(
 		}
 	}
 
-	delta.resize(tmp.size());
 	delta = tmp;
 	return d;
 }
@@ -88,6 +87,7 @@ VectorXd MLP::softMax(VectorXd So){
 
 VectorXd MLP::forward(VectorXd C, std::vector<VectorXd>& Sh)
 {
+	Sh.push_back(C);
 	for(const auto& w: W)
 	{
 		C = activation(C.transpose()*w);
@@ -115,17 +115,19 @@ void MLP::backward(size_t epoch, double alpha, VectorXd x, int y)
 	VectorXd Sd = class2vector(y, W.back().cols());
 	
 
-	VectorXd delta; //cambiar
+	VectorXd delta(W[W.size()-1].cols()); //cambiar
 	std::vector<MatrixXd> WT = W;
 	while(epoch--)
 	{
-		for(ssize_t i = W.size()-2; i >= 0; i--)
+		for(ssize_t i = W.size()-1; i >= 0; i--)
 		{
 
 			//output,desired,hk -> derivada_ho
 			//hk,hkm1 -> derivada_hh 
-			if(i == W.size() -2)
+
+			if(i == W.size() -1){
 				WT[i] -= alpha*derivada_ho(W[i], i, delta, Sh[i+1], Sd, Sh[i]);
+			}
 			else{
 				WT[i] -= alpha*derivada_hh(W[i], i, delta, Sh[i+1], Sh[i]);
 			}

@@ -83,8 +83,8 @@ int main(int argc, char** argv) {
 
 	for(size_t ii = 0; ii < i.test_X.size(); ii++)
 	{
-		std::cout << mlp.forward(i.test_X[ii], Sh) << std::endl;
+		//std::cout << mlp.forward(i.test_X[ii], Sh) << std::endl;
 		// mlp.forward(i.test_X[ii], Sh);
-		// mlp.backward(10, 0.5, i.test_X[ii], i.test_y[ii]);
+		mlp.backward(10, 0.5, i.test_X[ii], i.test_y[ii]);
 	}
 }
