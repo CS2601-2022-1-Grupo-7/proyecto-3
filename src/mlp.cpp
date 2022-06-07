@@ -15,6 +15,7 @@
 // along with hello.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "mlp.hpp"
+#include <fstream>
 
 MatrixXd MLP::derivada_ho(
 	const MatrixXd& w,
@@ -110,7 +111,7 @@ VectorXd class2vector(int _class, size_t n)
 	return v;
 }
 
-void calc_E(const VectorXd& Sd, const VectorXd& So)
+double calc_E(const VectorXd& Sd, const VectorXd& So)
 {
 	double E = 0.0;
 
@@ -118,7 +119,8 @@ void calc_E(const VectorXd& Sd, const VectorXd& So)
 	{
 		E += (Sd[i]*log(So[i]));
 	}
-	std::cout<<-1.0*E<<std::endl;
+	// std::cout<<-1.0*E<<std::endl;
+	return -1.0*E;
 }
 
 
@@ -128,21 +130,20 @@ void MLP::training(size_t epoch, double alpha, VectorXd x, int y){
 
 
 	forward(x);
-
-	std::cout<<"Error before: ";
-	calc_E(Sd, Sh.back());
+	std::ofstream myfile;
+	myfile.open ("error.txt");
+	// std::cout << calc_E(Sd, Sh.back())<< std::endl;
+	myfile << calc_E(Sd, Sh.back()) << "\n";
 
 	while(epoch--){
 
 		backward(alpha, y);
 
 		forward(x);
-
+		// std::cout << calc_E(Sd, Sh.back()) << std::endl;
+		myfile << calc_E(Sd, Sh.back()) << "\n";
 	}
-
-	std::cout<<"Error after: ";
-	calc_E(Sd, Sh.back());
-
+	myfile.close();
 }
 
 

@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
 	{
 		//std::cout << mlp.forward(i.test_X[ii], Sh) << std::endl;
 		// mlp.forward(i.test_X[ii], Sh); i.test_X.size()
-		mlp.training(100, 0.5, i.test_X[ii], i.test_y[ii]);
+		mlp.training(400, 0.5, i.test_X[ii], i.test_y[ii]);
 		std::cout<<std::endl;
 	}
 }
