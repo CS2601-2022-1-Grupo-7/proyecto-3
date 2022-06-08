@@ -9,7 +9,7 @@ import os
 import sys
 import pandas as pd
 from sklearn import preprocessing
-import codecs
+import random
 
 def transfHaar(path, x):  
   LL = cv2.imread(path)
@@ -54,7 +54,7 @@ for file in files_names:
   dataset_butterfly_names.append(file[0]+file[1]+file[2])
 
 df = pd.DataFrame(list(zip(dataset_butterfly, dataset_butterfly_names)), columns =['vect', 'class']) 
-train, validate, test = np.split(df.sample(frac=1, random_state=42), [int(.8*len(df)), int(.9*len(df))])
+train, validate, test = np.split(df.sample(frac=1, random_state=random.randint(10, 50)), [int(.8*len(df)), int(.9*len(df))])
 
 trainX = []
 trainY = []
