@@ -2,6 +2,7 @@
 
 ## Dependencies
 
+* `cimg-dev`
 * `cmake`
 * `libeigen3-dev`
 * `rapidjson-dev`
