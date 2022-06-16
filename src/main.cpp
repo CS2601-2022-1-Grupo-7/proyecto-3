@@ -21,49 +21,7 @@
 #include "arguments.hpp"
 #include "input.hpp"
 #include "mlp.hpp"
-
-std::function<VectorXd(const VectorXd&)> set_activation(arguments::type t)
-{
-	switch(t)
-	{
-		case arguments::type::RELU:
-			return
-				[](const VectorXd& v)
-				{
-					VectorXd Net = v;
-					for(size_t i = 0; i < (size_t)Net.size(); i++)
-					{
-						Net(i) = std::max(Net(i), 0.0);
-					}
-					return Net;
-				};
-
-		case arguments::type::TANH:
-			return
-				[](const VectorXd& v)
-				{
-					VectorXd Net = v;
-					for(size_t i = 0; i < (size_t)Net.size(); i++)
-					{
-						Net(i) = (1.0-exp(-2.0*Net(i)))/(1.0+exp(-2.0*Net(i)));
-					}
-					return Net;
-				};
-
-		case arguments::type::SIGMOID:
-		default:
-			return
-				[](const VectorXd& v)
-				{
-					VectorXd Net = v;
-					for(size_t i = 0; i < (size_t)Net.size(); i++)
-					{
-						Net(i) = 1.0/(1.0+exp(-Net(i)));
-					}
-					return Net;
-				};
-	}
-}
+#include "utils.hpp"
 
 int main(int argc, char** argv) {
 
