@@ -33,6 +33,7 @@ void arguments::usage(int exit_code) const
 		<< "\t-s, --sigmoid              Select Sigmoid activation function.\n"
 		<< "\t-t, --tanh                 Select Tanh activation function.\n"
 		<< "\t-r, --relu                 Select RELU activation function.\n"
+		<< "\t-b, --batch=N				 Number of batchs.\n"
 		;
 
 	exit(exit_code);
@@ -45,7 +46,7 @@ void arguments::parse()
 
 	int c;
 
-	static const char shortopts[] = "hl:n:N:str";
+	static const char shortopts[] = "hl:n:N:strb:";
 	static const option options[] =
 	{
 		{"help",            no_argument,       nullptr, 'h'},
@@ -55,6 +56,7 @@ void arguments::parse()
 		{"sigmoid",         no_argument,       nullptr, 's'},
 		{"tanh",            no_argument,       nullptr, 't'},
 		{"relu",            no_argument,       nullptr, 'r'},
+		{"batch",			required_argument, nullptr, 'b'},
 		{nullptr,           0,                 nullptr, 0},
 	};
 
@@ -62,6 +64,10 @@ void arguments::parse()
 	{
 		switch(c)
 		{
+			case 'b':
+				batch_size = atoi(optarg);
+				break;
+
 			case 'h':
 				usage(EXIT_SUCCESS);
 

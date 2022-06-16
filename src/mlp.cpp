@@ -15,7 +15,6 @@
 // along with hello.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "mlp.hpp"
-#include <fstream>
 
 MatrixXd MLP::derivada_ho(
 	const MatrixXd& w,
@@ -27,11 +26,11 @@ MatrixXd MLP::derivada_ho(
 	)
 {
 
-	delta.resize(So.size());
 	MatrixXd d(w.rows(), w.cols());
+	delta.resize(So.size());
+
 	for(size_t i = 0; i < So.size(); i++){
-		// delta(i) = ((So(i)-Sd(i))*So(i)*(1.0-So(i)));
-		delta(i) = So[i] - Sd[i];
+		delta(i) = ((So[i]-Sd[i])*So[i]*(1.0-So[i]));
 	}
 
 	for(size_t i = 0; i < w.rows(); i++){
@@ -39,6 +38,21 @@ MatrixXd MLP::derivada_ho(
 			d(i,j) = delta(j)*Shk(i);
 		}
 	}
+
+
+	// MatrixXd d(w.rows(), w.cols());
+	// for(size_t i = 0; i < So.size(); i++){
+	// 	// delta(i) = ((So[i]-Sd[i])*So[i]*(1.0-So[i]));
+	// 	delta(i) = So[i] - Sd[i];
+	// }
+	// // std::cout << "Sd\n" << Sd << std::endl;
+	// // std::cout << "delta\n" << delta << std::endl;
+	// // std::cout << std::endl;
+	// for(size_t i = 0; i < w.rows(); i++){
+	// 	for(size_t j = 0; j < w.cols(); j++){
+	// 		d(i,j) = delta(j)*Shk(i);
+	// 	}
+	// }
 
 	// std::cout << "d:" << std::endl;
 	// std::cout << d << std::endl;
@@ -87,16 +101,21 @@ VectorXd MLP::softMax(VectorXd So){
 	return result;
 }
 
-void MLP::forward(VectorXd C)
+void MLP::forward(VectorXd C, double b)
 {
 	this->Sh.push_back(C);
 	for(const auto& w: W)
 	{
+		// std::cout << "multi:\n" << C.transpose()*w << std::endl;
 		C = activation(C.transpose()*w);
+		// for(int c=0; c<C.size(); c++){
+		// 	C[c] = C[c]+b;
+		// }
 		this->Sh.push_back(C);
 	}
-
-	this->Sh.push_back(softMax(C));
+	// std::cout<<"C\n" << C << std::endl;
+	// this->Sh.push_back(softMax(C));
+	// this->Sh.push_back(C);
 }
 
 VectorXd class2vector(int _class, size_t n)
@@ -119,57 +138,53 @@ double calc_E(const VectorXd& Sd, const VectorXd& So)
 	{
 		E += (Sd[i]*log(So[i]));
 	}
-	// std::cout<<-1.0*E<<std::endl;
 	return -1.0*E;
 }
 
+std::tuple<VectorXd, double> MLP::testing(VectorXd C, int y, double b){
+	// for (auto i=0; i< W.size(); i++){
+	// 	std::cout << W[i] << std::endl;
+	// }
+	VectorXd Sdd = class2vector(y, W.back().cols());
 
-void MLP::training(size_t epoch, double alpha, VectorXd x, int y){
-	
-	VectorXd Sd = class2vector(y, W.back().cols());
-
-
-	forward(x);
-	std::ofstream myfile;
-	myfile.open ("error.txt");
-	// std::cout << calc_E(Sd, Sh.back())<< std::endl;
-	myfile << calc_E(Sd, Sh.back()) << "\n";
-
-	while(epoch--){
-
-		backward(alpha, y);
-
-		forward(x);
-		// std::cout << calc_E(Sd, Sh.back()) << std::endl;
-		myfile << calc_E(Sd, Sh.back()) << "\n";
+	for(const auto& w: W)
+	{
+		C = activation(C.transpose()*w);
+		for(int c=0; c<C.size(); c++){
+			C[c] = C[c]+b;
+		}
 	}
-	myfile.close();
+	return {C, calc_E(Sdd, C)};
 }
 
 
+double MLP::training(double alpha, VectorXd x, int y, double bias){
+	// for (auto i=0; i< W.size(); i++){
+	// 	std::cout << W[i] << std::endl;
+	// }
 
+	VectorXd Sd = class2vector(y, W.back().cols());
+
+	forward(x, bias);
+	backward(alpha, y);
+	forward(x, bias);
+	
+	return calc_E(Sd, Sh.back());
+}
 
 void MLP::backward(double alpha, int y)
 {
 	VectorXd Sd = class2vector(y, W.back().cols());
-
-	// std::cout<<"Sd: "<<Sd<<std::endl;
-	
-
 	VectorXd delta(W[W.size()-1].cols()); //cambiar
 	std::vector<MatrixXd> WT = W;
 
 	for(ssize_t i = W.size()-1; i >= 0; i--)
 	{
-
-		//output,desired,hk -> derivada_ho
-		//hk,hkm1 -> derivada_hh 
-
-		if(i == W.size() -1){
-			WT[i] -= alpha*derivada_ho(W[i], i, delta, Sh[i+2], Sd, Sh[i+1]);
+		if(i == W.size() -1){		
+			WT[i] -= alpha*derivada_ho(W[i], i, delta, Sh[i+1], Sd, Sh[i+0]);
 		}
 		else{
-			WT[i] -= alpha*derivada_hh(W[i], i, delta, Sh[i+1], Sh[i]);
+			WT[i] -= alpha*derivada_hh(W[i], i, delta, Sh[i+0], Sh[i]);
 		}
 	}
 
@@ -183,6 +198,7 @@ MLP::MLP(size_t features,
 		std::function<VectorXd(const VectorXd&)> activation):
 		activation(activation)
 {
+	std::srand(time(NULL));
 	if (hidden_layers != 0){
 		MatrixXd m = MatrixXd::Random(features,neurons[0]);
 		W.push_back(m);

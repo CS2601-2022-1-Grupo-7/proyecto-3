@@ -62,10 +62,11 @@ public:
 		const std::vector<size_t>& neurons,
 		std::function<VectorXd(const VectorXd&)> activation);
 
-	void forward(VectorXd C);
+	void forward(VectorXd C, double b);
 
 	void backward(double alpha, int y);
 
-	void training(size_t epoch, double alpha, VectorXd x, int y);
+	double training(double alpha, VectorXd x, int y, double b);
+	std::tuple<VectorXd, double> testing(VectorXd C, int y, double b);
 
 };

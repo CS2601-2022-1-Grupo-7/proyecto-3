@@ -16,6 +16,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <fstream>
 
 #include "arguments.hpp"
 #include "input.hpp"
@@ -76,13 +77,45 @@ int main(int argc, char** argv) {
 		set_activation(args.activation)
 	);
 
-	std::vector<VectorXd> Sh;
-
-	for(size_t ii = 0; ii < 1; ii++)
-	{
-		//std::cout << mlp.forward(i.test_X[ii], Sh) << std::endl;
-		// mlp.forward(i.test_X[ii], Sh); i.test_X.size()
-		mlp.training(400, 0.5, i.test_X[ii], i.test_y[ii]);
-		std::cout<<std::endl;
+	std::vector<double> errorsTraing;
+	std::vector<double> errorsTest;
+	int epoch = 50;
+	double totalProm = 0;
+	double errorT = 0; 
+	for (int k=0; k<epoch; k++){
+		for (int j=0; j<args.batch_size; j++){
+			std::srand(time(NULL));
+			int randomTraining = rand() % i.test_X.size();
+			errorT = mlp.training(0.01, i.train_X[randomTraining], i.train_y[randomTraining], 1);
+			totalProm += errorT;
+		}
+		totalProm = totalProm/args.batch_size;
+		errorsTraing.push_back(totalProm);
 	}
+
+	double accuracy = 0;
+	double tmp = 0;
+	for(size_t ii = 0; ii < i.test_X.size(); ii++)
+	{
+		auto [result, tmp] = mlp.testing(i.test_X[ii], i.test_y[ii], 0);
+		int classR = std::max_element(result.begin(),result.end()) - result.begin() +1;
+		errorsTest.push_back(tmp);
+		std::cout<< "class: "<< i.test_y[ii]<< " result: " << classR<< std::endl;
+		if (i.test_y[ii] == classR){
+			accuracy +=1;
+		}
+	}
+	std::ofstream myfileTest ("error.csv");
+	myfileTest << "epoch,errorTraining" <<  '\n' ;
+	for (int i=0; i<errorsTraing.size(); i++){
+		myfileTest << i << "," << errorsTraing[i] <<  '\n' ;
+	}
+	myfileTest.close();
+
+	// std::ofstream myfile ("error.txt");
+	// for (int i=0; i<errorsTraing.size(); i++){
+	// 	myfile << errorsTraing[i] <<  '\n' ;
+	// }
+	// myfile.close();
+	std::cout << (accuracy/i.test_X.size()) * 100 << "%" << std::endl;
 }

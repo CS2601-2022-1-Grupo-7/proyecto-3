@@ -41,6 +41,7 @@ public:
 	std::vector<size_t> neurons;
 	size_t              output_neurons;
 	type                activation;
+	int 				batch_size;
 
 	void parse();
 
