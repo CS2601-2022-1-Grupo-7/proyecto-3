@@ -40,23 +40,6 @@ MatrixXd MLP::derivada_ho(
 		}
 	}
 
-
-	// MatrixXd d(w.rows(), w.cols());
-	// for(size_t i = 0; i < So.size(); i++){
-	// 	// delta(i) = ((So[i]-Sd[i])*So[i]*(1.0-So[i]));
-	// 	delta(i) = So[i] - Sd[i];
-	// }
-	// // std::cout << "Sd\n" << Sd << std::endl;
-	// // std::cout << "delta\n" << delta << std::endl;
-	// // std::cout << std::endl;
-	// for(size_t i = 0; i < w.rows(); i++){
-	// 	for(size_t j = 0; j < w.cols(); j++){
-	// 		d(i,j) = delta(j)*Shk(i);
-	// 	}
-	// }
-
-	// std::cout << "d:" << std::endl;
-	// std::cout << d << std::endl;
 	return d;
 }
 
@@ -88,18 +71,6 @@ MatrixXd MLP::derivada_hh(
 
 	delta = tmp;
 	return d;
-}
-
-VectorXd MLP::softMax(VectorXd So){
-	VectorXd result(So.size());
-	double sum=0;
-	for(int i=0; i<So.size(); i++){
-		sum+=exp(So(i));
-	}
-	for(int i=0; i<So.size(); i++){
-		result(i)=exp(So(i))/sum;
-	}
-	return result;
 }
 
 void MLP::forward(VectorXd C, double b)

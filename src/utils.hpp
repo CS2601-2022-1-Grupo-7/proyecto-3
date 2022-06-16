@@ -24,5 +24,10 @@
 
 using Eigen::VectorXd;
 
+VectorXd relu(const VectorXd& v);
+VectorXd _tanh(const VectorXd& v);
+VectorXd sigmoid(const VectorXd& v);
+VectorXd softmax(const VectorXd& v);
+
 std::function<VectorXd(const VectorXd&)> set_activation(arguments::type t);
 VectorXd class2vector(int _class, size_t n);

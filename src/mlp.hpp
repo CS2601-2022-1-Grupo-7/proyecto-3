@@ -33,8 +33,6 @@ private:
 	std::vector<MatrixXd> W;
 	std::vector<VectorXd> Sh;
 
-	VectorXd softMax(VectorXd So);
-
 	std::function<VectorXd(const VectorXd&)> activation;
 
 	MatrixXd derivada_ho(
