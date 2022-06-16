@@ -33,7 +33,8 @@ void arguments::usage(int exit_code) const
 		<< "\t-s, --sigmoid              Select Sigmoid activation function.\n"
 		<< "\t-t, --tanh                 Select Tanh activation function.\n"
 		<< "\t-r, --relu                 Select RELU activation function.\n"
-		<< "\t-b, --batch=N				 Number of batchs.\n"
+		<< "\t-b, --batch=N              Size of a batch.\n"
+		<< "\t-e, --epochs=N             Training epochs.\n"
 		;
 
 	exit(exit_code);
@@ -56,7 +57,8 @@ void arguments::parse()
 		{"sigmoid",         no_argument,       nullptr, 's'},
 		{"tanh",            no_argument,       nullptr, 't'},
 		{"relu",            no_argument,       nullptr, 'r'},
-		{"batch",			required_argument, nullptr, 'b'},
+		{"batch",           required_argument, nullptr, 'b'},
+		{"epochs",          required_argument, nullptr, 'e'},
 		{nullptr,           0,                 nullptr, 0},
 	};
 
@@ -64,6 +66,10 @@ void arguments::parse()
 	{
 		switch(c)
 		{
+			case 'e':
+				epochs = atoi(optarg);
+				break;
+
 			case 'b':
 				batch_size = atoi(optarg);
 				break;

@@ -37,11 +37,12 @@ int main(int argc, char** argv) {
 
 	std::vector<double> errorsTraing;
 	std::vector<double> errorsTest;
-	int epoch = 50;
+
 	double totalProm = 0;
-	double errorT = 0; 
-	for (int k=0; k<epoch; k++){
-		for (int j=0; j<args.batch_size; j++){
+	double errorT = 0;
+
+	for (size_t k=0; k<args.epochs; k++){
+		for (size_t j=0; j<args.batch_size; j++){
 			std::srand(time(NULL));
 			int randomTraining = rand() % i.test_X.size();
 			errorT = mlp.training(0.01, i.train_X[randomTraining], i.train_y[randomTraining], 1);
@@ -52,7 +53,6 @@ int main(int argc, char** argv) {
 	}
 
 	double accuracy = 0;
-	double tmp = 0;
 	for(size_t ii = 0; ii < i.test_X.size(); ii++)
 	{
 		auto [result, tmp] = mlp.testing(i.test_X[ii], i.test_y[ii], 0);
@@ -65,15 +65,10 @@ int main(int argc, char** argv) {
 	}
 	std::ofstream myfileTest ("error.csv");
 	myfileTest << "epoch,errorTraining" <<  '\n' ;
-	for (int i=0; i<errorsTraing.size(); i++){
+	for (size_t i=0; i<errorsTraing.size(); i++){
 		myfileTest << i << "," << errorsTraing[i] <<  '\n' ;
 	}
 	myfileTest.close();
 
-	// std::ofstream myfile ("error.txt");
-	// for (int i=0; i<errorsTraing.size(); i++){
-	// 	myfile << errorsTraing[i] <<  '\n' ;
-	// }
-	// myfile.close();
 	std::cout << (accuracy/i.test_X.size()) * 100 << "%" << std::endl;
 }
