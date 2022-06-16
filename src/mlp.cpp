@@ -15,6 +15,7 @@
 // along with hello.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "mlp.hpp"
+#include "utils.hpp"
 
 MatrixXd MLP::derivada_ho(
 	const MatrixXd& w,
@@ -118,18 +119,6 @@ void MLP::forward(VectorXd C, double b)
 	// this->Sh.push_back(C);
 }
 
-VectorXd class2vector(int _class, size_t n)
-{
-	VectorXd v(n);
-
-	for(size_t i = 0; i < n; i++)
-	{
-		v[i] = (int)i == _class-1 ? 1 : 0;
-	}
-
-	return v;
-}
-
 double calc_E(const VectorXd& Sd, const VectorXd& So)
 {
 	double E = 0.0;
@@ -168,7 +157,7 @@ double MLP::training(double alpha, VectorXd x, int y, double bias){
 	forward(x, bias);
 	backward(alpha, y);
 	forward(x, bias);
-	
+
 	return calc_E(Sd, Sh.back());
 }
 
@@ -180,7 +169,7 @@ void MLP::backward(double alpha, int y)
 
 	for(ssize_t i = W.size()-1; i >= 0; i--)
 	{
-		if(i == W.size() -1){		
+		if(i == W.size() -1){
 			WT[i] -= alpha*derivada_ho(W[i], i, delta, Sh[i+1], Sd, Sh[i+0]);
 		}
 		else{

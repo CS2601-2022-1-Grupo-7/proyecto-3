@@ -25,3 +25,4 @@
 using Eigen::VectorXd;
 
 std::function<VectorXd(const VectorXd&)> set_activation(arguments::type t);
+VectorXd class2vector(int _class, size_t n);
