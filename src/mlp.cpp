@@ -33,7 +33,7 @@ MatrixXd MLP::derivada_ho(
 	assert((size_t)So.size() == J);
 	assert((size_t)Shk.size() == I);
 
-	VectorXd S_part(So.size());
+	VectorXd S_part(J);
 
 	for(size_t j = 0; j < J; j++)
 		S_part(j) = ((So[j]-Sd[j])*So[j]*(1.0-So[j]));
@@ -47,16 +47,16 @@ MatrixXd MLP::derivada_ho(
 
 // FIXME
 MatrixXd MLP::derivada_hh(
-	const MatrixXd& w,
-	size_t km1,
-	VectorXd &delta,
-	const VectorXd& Shk, // Hidden
-	const VectorXd& Shkm1 // Hidden
+	size_t I,
+	size_t J,
+	size_t k,
+	std::span<VectorXd> S,
+	VectorXd& delta
 	) const
 {
 
 	VectorXd tmp(w.cols());
-	MatrixXd d(w.rows(), w.cols());
+	MatrixXd d(I, J);
 
 	for(size_t j = 0; j < (size_t)w.cols(); j++){
 		double valTmp = 0.0;
@@ -80,6 +80,7 @@ std::vector<VectorXd> MLP::full_forward(VectorXd C) const
 {
 	std::vector<VectorXd> Sh;
 
+	Sh.push_back(C);
 	for(size_t i = 0; i < W.size(); i++)
 	{
 		C = C.transpose()*W[i];
@@ -139,22 +140,17 @@ void MLP::backward(double alpha, const VectorXd& X, int y)
 	auto S = full_forward(X);
 	VectorXd Sd = class2vector(y);
 	VectorXd delta(W[W.size()-1].cols()); //cambiar
-	std::vector<MatrixXd> WT = W;
 
 	for(ssize_t i = W.size()-1; i >= 0; i--)
 	{
 		size_t I = W[i].rows();
 		size_t J = W[i].cols();
 
-		if(i == (ssize_t)W.size() -1){
-			WT[i] -= alpha*derivada_ho(I, J, S, Sd, delta);
-		}
-		else{
-			WT[i] -= alpha*derivada_hh(W[i], i, delta, S[i+0], S[i]);
-		}
+		if(i == (ssize_t)W.size() -1)
+			W[i] -= alpha*derivada_ho(I, J, S, Sd, delta);
+		else
+			W[i] -= alpha*derivada_hh(I, J, i, S, delta);
 	}
-
-	W = WT;
 }
 
 MLP::MLP(size_t features,

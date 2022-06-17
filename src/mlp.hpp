@@ -46,11 +46,11 @@ private:
 
 
 	MatrixXd derivada_hh(
-		const MatrixXd& w,
-		size_t km1,
-		VectorXd &delta,
-		const VectorXd& Shk, // Hidden
-		const VectorXd& Shkm1 // Hidden
+		size_t I,
+		size_t J,
+		size_t k,
+		std::span<VectorXd> S,
+		VectorXd& delta
 		) const;
 
 	VectorXd class2vector(int _class) const;
