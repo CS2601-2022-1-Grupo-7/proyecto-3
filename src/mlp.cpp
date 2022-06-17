@@ -20,7 +20,7 @@
 MatrixXd MLP::derivada_ho(
 	size_t I,
 	size_t J,
-	std::span<VectorXd> S,
+	const std::vector<VectorXd>& S,
 	const VectorXd& Sd, // Desired
 	VectorXd& delta
 	) const
@@ -34,7 +34,7 @@ MatrixXd MLP::derivada_ho(
 	assert((size_t)Shk.size() == I);
 
 	for(size_t j = 0; j < J; j++)
-		delta(j) = ((So[j]-Sd[j])*So[j]*(1.0-So[j]));
+		delta(j) = So[j]-Sd[j];
 
 	for(size_t i = 0; i < I; i++)
 		for(size_t j = 0; j < J; j++)
@@ -48,24 +48,28 @@ MatrixXd MLP::derivada_hh(
 	size_t I,
 	size_t J,
 	size_t k,
-	std::span<VectorXd> S,
+	const std::vector<VectorXd>& S,
 	VectorXd& delta
 	) const
 {
-
-	VectorXd tmp(w.cols());
+	VectorXd tmp(J);
 	MatrixXd d(I, J);
+	const auto& Shk = S[k+1];
+	const auto& Shkm1 = S[k];
 
-	for(size_t j = 0; j < (size_t)w.cols(); j++){
+	assert((size_t)Shk.size() == J);
+	assert((size_t)Shkm1.size() == I);
+
+	for(size_t j = 0; j < J; j++){
 		double valTmp = 0.0;
-		for(size_t k = 0; k < (size_t)delta.size(); k++){
-			valTmp += delta(k)*W[km1+1](j,k);
+		for(size_t z = 0; z < (size_t)delta.size(); z++){
+			valTmp += delta(z)*W[k](j,z);
 		}
 		tmp(j) = valTmp*Shk(j)*(1.0-Shk(j));
 	}
 
-	for(size_t i = 0; i < (size_t)w.rows(); i++){
-		for(size_t j = 0; j < (size_t)w.cols(); j++){
+	for(size_t i = 0; i < I; i++){
+		for(size_t j = 0; j < J; j++){
 			d(i,j) = tmp(j)*Shkm1(i);
 		}
 	}
@@ -124,7 +128,7 @@ std::tuple<VectorXd, double> MLP::testing(VectorXd C, int y, double b){
 	return {C, calc_E(Sdd, C)};
 }
 
-void MLP::train(std::span<VectorXd> X, std::span<int> y, size_t batch_size, double alpha)
+void MLP::train(const std::vector<VectorXd>& X, const std::vector<int>& y, size_t batch_size, double alpha)
 {
 	for(size_t b = 0; b < batch_size; b++)
 	{
@@ -177,7 +181,7 @@ MLP::MLP(size_t features,
 	}
 };
 
-double MLP::loss(std::span<VectorXd> X, std::span<int> true_y) const
+double MLP::loss(const std::vector<VectorXd>& X, const std::vector<int>& true_y) const
 {
 	assert(X.size() == true_y.size());
 

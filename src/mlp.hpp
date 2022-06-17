@@ -20,7 +20,6 @@
 #include <functional>
 #include <iostream>
 #include <vector>
-#include <span>
 
 #include <Eigen/Dense>
 
@@ -39,7 +38,7 @@ private:
 	MatrixXd derivada_ho(
 		size_t I,
 		size_t J,
-		std::span<VectorXd> S,
+		const std::vector<VectorXd>& S,
 		const VectorXd& Sd, // Desired
 		VectorXd& delta
 		) const;
@@ -49,7 +48,7 @@ private:
 		size_t I,
 		size_t J,
 		size_t k,
-		std::span<VectorXd> S,
+		const std::vector<VectorXd>& S,
 		VectorXd& delta
 		) const;
 
@@ -67,8 +66,8 @@ public:
 
 	void backward(double alpha, const VectorXd& X, int y);
 
-	void train(std::span<VectorXd> X, std::span<int> y, size_t batch_size, double alpha);
+	void train(const std::vector<VectorXd>& X, const std::vector<int>& y, size_t batch_size, double alpha);
 	std::tuple<VectorXd, double> testing(VectorXd C, int y, double b);
 
-	double loss(std::span<VectorXd> X, std::span<int> true_y) const;
+	double loss(const std::vector<VectorXd>& X, const std::vector<int>& true_y) const;
 };
