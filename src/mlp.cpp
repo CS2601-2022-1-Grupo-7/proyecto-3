@@ -19,30 +19,32 @@
 
 MatrixXd MLP::derivada_ho(
 	const MatrixXd& w,
-	size_t k,
-	VectorXd& delta,
-	const VectorXd& So, // Output --- Softmax Probabilidads
+	std::span<VectorXd> S,
 	const VectorXd& Sd, // Desired
-	const VectorXd& Shk // Hidden --- Softmax Output
+	VectorXd& delta
 	)
 {
-
 	MatrixXd d(w.rows(), w.cols());
-	delta.resize(So.size());
 
-	for(size_t i = 0; i < (size_t)So.size(); i++){
-		delta(i) = ((So[i]-Sd[i])*So[i]*(1.0-So[i]));
+	const auto& So = S.back();
+	const auto& Shk = *(S.rbegin()+1);
+
+	VectorXd S_part(So.size());
+
+	for(size_t j = 0; j < (size_t)So.size(); j++){
+		S_part(j) = ((So[j]-Sd[j])*So[j]*(1.0-So[j]));
 	}
 
 	for(size_t i = 0; i < (size_t)w.rows(); i++){
 		for(size_t j = 0; j < (size_t)w.cols(); j++){
-			d(i,j) = delta(j)*Shk(i);
+			d(i,j) = S_part(j)*Shk(i);
 		}
 	}
 
 	return d;
 }
 
+// FIXME
 MatrixXd MLP::derivada_hh(
 	const MatrixXd& w,
 	size_t km1,
@@ -76,7 +78,6 @@ MatrixXd MLP::derivada_hh(
 std::vector<VectorXd> MLP::full_forward(VectorXd C) const
 {
 	std::vector<VectorXd> Sh;
-	Sh.push_back(C);
 
 	for(size_t i = 0; i < W.size(); i++)
 	{
@@ -132,10 +133,9 @@ void MLP::train(std::span<VectorXd> X, std::span<int> y, size_t batch_size, doub
 	}
 }
 
-// FIXME
 void MLP::backward(double alpha, const VectorXd& X, int y)
 {
-	auto Sh = full_forward(X);
+	auto S = full_forward(X);
 	VectorXd Sd = class2vector(y);
 	VectorXd delta(W[W.size()-1].cols()); //cambiar
 	std::vector<MatrixXd> WT = W;
@@ -143,10 +143,10 @@ void MLP::backward(double alpha, const VectorXd& X, int y)
 	for(ssize_t i = W.size()-1; i >= 0; i--)
 	{
 		if(i == (ssize_t)W.size() -1){
-			WT[i] -= alpha*derivada_ho(W[i], i, delta, Sh[i+1], Sd, Sh[i+0]);
+			WT[i] -= alpha*derivada_ho(W[i], S, Sd, delta);
 		}
 		else{
-			WT[i] -= alpha*derivada_hh(W[i], i, delta, Sh[i+0], Sh[i]);
+			WT[i] -= alpha*derivada_hh(W[i], i, delta, S[i+0], S[i]);
 		}
 	}
 
@@ -160,7 +160,6 @@ MLP::MLP(size_t features,
 		std::function<VectorXd(const VectorXd&)> activation):
 		activation(activation)
 {
-	std::srand(time(NULL));
 	if (hidden_layers != 0){
 		MatrixXd m = MatrixXd::Random(features,neurons[0]);
 		W.push_back(m);

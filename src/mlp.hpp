@@ -38,11 +38,9 @@ private:
 
 	MatrixXd derivada_ho(
 		const MatrixXd& w,
-		size_t k,
-		VectorXd& delta,
-		const VectorXd& So, // Output
+		std::span<VectorXd> S,
 		const VectorXd& Sd, // Desired
-		const VectorXd& Shk // Hidden
+		VectorXd& delta
 		);
 
 
