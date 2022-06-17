@@ -63,7 +63,7 @@ MatrixXd MLP::derivada_hh(
 	for(size_t j = 0; j < J; j++){
 		double valTmp = 0.0;
 		for(size_t z = 0; z < (size_t)delta.size(); z++){
-			valTmp += delta(z)*W[k](j,z);
+			valTmp += delta(z)*W[k+1](j,z);
 		}
 		tmp(j) = valTmp*Shk(j)*(1.0-Shk(j));
 	}
@@ -153,7 +153,7 @@ void MLP::backward(double alpha, const VectorXd& X, int y)
 		else
 			W[i] -= alpha*derivada_hh(I, J, i, S, delta);
 
-		assert(delta.size() == W.back().cols());
+		//assert(delta.size() == W.back().cols());
 	}
 }
 
