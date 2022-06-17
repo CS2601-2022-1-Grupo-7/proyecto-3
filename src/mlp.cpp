@@ -33,14 +33,12 @@ MatrixXd MLP::derivada_ho(
 	assert((size_t)So.size() == J);
 	assert((size_t)Shk.size() == I);
 
-	VectorXd S_part(J);
-
 	for(size_t j = 0; j < J; j++)
-		S_part(j) = ((So[j]-Sd[j])*So[j]*(1.0-So[j]));
+		delta(j) = ((So[j]-Sd[j])*So[j]*(1.0-So[j]));
 
 	for(size_t i = 0; i < I; i++)
 		for(size_t j = 0; j < J; j++)
-			d(i,j) = S_part(j)*Shk(i);
+			d(i,j) = delta(j)*Shk(i);
 
 	return d;
 }
@@ -139,7 +137,7 @@ void MLP::backward(double alpha, const VectorXd& X, int y)
 {
 	auto S = full_forward(X);
 	VectorXd Sd = class2vector(y);
-	VectorXd delta(W[W.size()-1].cols()); //cambiar
+	VectorXd delta(W.back().cols()); //cambiar
 
 	for(ssize_t i = W.size()-1; i >= 0; i--)
 	{
@@ -150,6 +148,8 @@ void MLP::backward(double alpha, const VectorXd& X, int y)
 			W[i] -= alpha*derivada_ho(I, J, S, Sd, delta);
 		else
 			W[i] -= alpha*derivada_hh(I, J, i, S, delta);
+
+		assert(delta.size() == W.back().cols());
 	}
 }
 
