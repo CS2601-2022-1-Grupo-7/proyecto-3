@@ -18,28 +18,29 @@
 #include "utils.hpp"
 
 MatrixXd MLP::derivada_ho(
-	const MatrixXd& w,
+	size_t I,
+	size_t J,
 	std::span<VectorXd> S,
 	const VectorXd& Sd, // Desired
 	VectorXd& delta
-	)
+	) const
 {
-	MatrixXd d(w.rows(), w.cols());
+	MatrixXd d(I, J);
 
 	const auto& So = S.back();
 	const auto& Shk = *(S.rbegin()+1);
 
+	assert((size_t)So.size() == J);
+	assert((size_t)Shk.size() == I);
+
 	VectorXd S_part(So.size());
 
-	for(size_t j = 0; j < (size_t)So.size(); j++){
+	for(size_t j = 0; j < J; j++)
 		S_part(j) = ((So[j]-Sd[j])*So[j]*(1.0-So[j]));
-	}
 
-	for(size_t i = 0; i < (size_t)w.rows(); i++){
-		for(size_t j = 0; j < (size_t)w.cols(); j++){
+	for(size_t i = 0; i < I; i++)
+		for(size_t j = 0; j < J; j++)
 			d(i,j) = S_part(j)*Shk(i);
-		}
-	}
 
 	return d;
 }
@@ -51,7 +52,7 @@ MatrixXd MLP::derivada_hh(
 	VectorXd &delta,
 	const VectorXd& Shk, // Hidden
 	const VectorXd& Shkm1 // Hidden
-	)
+	) const
 {
 
 	VectorXd tmp(w.cols());
@@ -142,8 +143,11 @@ void MLP::backward(double alpha, const VectorXd& X, int y)
 
 	for(ssize_t i = W.size()-1; i >= 0; i--)
 	{
+		size_t I = W[i].rows();
+		size_t J = W[i].cols();
+
 		if(i == (ssize_t)W.size() -1){
-			WT[i] -= alpha*derivada_ho(W[i], S, Sd, delta);
+			WT[i] -= alpha*derivada_ho(I, J, S, Sd, delta);
 		}
 		else{
 			WT[i] -= alpha*derivada_hh(W[i], i, delta, S[i+0], S[i]);

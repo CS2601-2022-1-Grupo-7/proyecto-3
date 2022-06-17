@@ -37,11 +37,12 @@ private:
 	std::function<VectorXd(const VectorXd&)> activation;
 
 	MatrixXd derivada_ho(
-		const MatrixXd& w,
+		size_t I,
+		size_t J,
 		std::span<VectorXd> S,
 		const VectorXd& Sd, // Desired
 		VectorXd& delta
-		);
+		) const;
 
 
 	MatrixXd derivada_hh(
@@ -50,7 +51,7 @@ private:
 		VectorXd &delta,
 		const VectorXd& Shk, // Hidden
 		const VectorXd& Shkm1 // Hidden
-		);
+		) const;
 
 	VectorXd class2vector(int _class) const;
 	std::vector<VectorXd> full_forward(VectorXd C) const;
