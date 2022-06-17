@@ -24,6 +24,7 @@
 #include "utils.hpp"
 
 int main(int argc, char** argv) {
+	std::srand(time(NULL));
 
 	arguments args(argc, argv);
 	input     i(args.json_file);
@@ -35,40 +36,26 @@ int main(int argc, char** argv) {
 		set_activation(args.activation)
 	);
 
-	std::vector<double> errorsTraing;
-	std::vector<double> errorsTest;
+	std::ofstream csv_file ("error.csv");
 
-	double totalProm = 0;
-	double errorT = 0;
+	if(!csv_file.is_open())
+		return EXIT_FAILURE;
 
-	for (size_t k=0; k<args.epochs; k++){
-		for (size_t j=0; j<args.batch_size; j++){
-			std::srand(time(NULL));
-			int randomTraining = rand() % i.test_X.size();
-			errorT = mlp.training(0.01, i.train_X[randomTraining], i.train_y[randomTraining], 1);
-			totalProm += errorT;
-		}
-		totalProm = totalProm/args.batch_size;
-		errorsTraing.push_back(totalProm);
-	}
+	csv_file << "epoch,train,validation\n";
 
-	double accuracy = 0;
-	for(size_t ii = 0; ii < i.test_X.size(); ii++)
+	for(size_t e = 0; e < args.epochs; e++)
 	{
-		auto [result, tmp] = mlp.testing(i.test_X[ii], i.test_y[ii], 0);
-		int classR = std::max_element(result.begin(),result.end()) - result.begin() +1;
-		errorsTest.push_back(tmp);
-		std::cout<< "class: "<< i.test_y[ii]<< " result: " << classR<< std::endl;
-		if (i.test_y[ii] == classR){
-			accuracy +=1;
-		}
-	}
-	std::ofstream myfileTest ("error.csv");
-	myfileTest << "epoch,errorTraining" <<  '\n' ;
-	for (size_t i=0; i<errorsTraing.size(); i++){
-		myfileTest << i << "," << errorsTraing[i] <<  '\n' ;
-	}
-	myfileTest.close();
+		// TODO train
 
-	std::cout << (accuracy/i.test_X.size()) * 100 << "%" << std::endl;
+		csv_file
+			<< e
+			<< ','
+			<< mlp.loss(i.train_X, i.train_y)
+			<< ','
+			<< mlp.loss(i.validate_X, i.validate_y)
+			<< '\n'
+		;
+	}
+
+	return EXIT_SUCCESS;
 }

@@ -90,6 +90,14 @@ void MLP::forward(VectorXd C, double b)
 	// this->Sh.push_back(C);
 }
 
+VectorXd MLP::forward(VectorXd C) const
+{
+	for(size_t i = 0; i < W.size(); i++)
+		C = activation(C.transpose()*W[i]);
+
+	return C;
+}
+
 double calc_E(const VectorXd& Sd, const VectorXd& So)
 {
 	double E = 0.0;
@@ -105,7 +113,7 @@ std::tuple<VectorXd, double> MLP::testing(VectorXd C, int y, double b){
 	// for (auto i=0; i< W.size(); i++){
 	// 	std::cout << W[i] << std::endl;
 	// }
-	VectorXd Sdd = class2vector(y, W.back().cols());
+	VectorXd Sdd = class2vector(y);
 
 	for(const auto& w: W)
 	{
@@ -123,7 +131,7 @@ double MLP::training(double alpha, VectorXd x, int y, double bias){
 	// 	std::cout << W[i] << std::endl;
 	// }
 
-	VectorXd Sd = class2vector(y, W.back().cols());
+	VectorXd Sd = class2vector(y);
 
 	forward(x, bias);
 	backward(alpha, y);
@@ -134,7 +142,7 @@ double MLP::training(double alpha, VectorXd x, int y, double bias){
 
 void MLP::backward(double alpha, int y)
 {
-	VectorXd Sd = class2vector(y, W.back().cols());
+	VectorXd Sd = class2vector(y);
 	VectorXd delta(W[W.size()-1].cols()); //cambiar
 	std::vector<MatrixXd> WT = W;
 
@@ -175,3 +183,28 @@ MLP::MLP(size_t features,
 		W.push_back(m);
 	}
 };
+
+double MLP::loss(std::span<VectorXd> X, std::span<int> true_y) const
+{
+	assert(X.size() == true_y.size());
+
+	double r = 0;
+
+	for(size_t i = 0; i < X.size(); i++)
+		r += calc_E(class2vector(true_y[i]), forward(X[i]));
+
+	return r/X.size();
+}
+
+VectorXd MLP::class2vector(int _class) const
+{
+	size_t n = W.back().cols();
+	VectorXd v(n);
+
+	for(size_t i = 0; i < n; i++)
+	{
+		v[i] = (int)i == _class-1 ? 1 : 0;
+	}
+
+	return v;
+}

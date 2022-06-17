@@ -47,7 +47,7 @@ void arguments::parse()
 
 	int c;
 
-	static const char shortopts[] = "hl:n:N:strb:";
+	static const char shortopts[] = "hl:n:N:strb:e:";
 	static const option options[] =
 	{
 		{"help",            no_argument,       nullptr, 'h'},

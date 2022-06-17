@@ -20,6 +20,7 @@
 #include <functional>
 #include <iostream>
 #include <vector>
+#include <span>
 
 #include <Eigen/Dense>
 
@@ -53,6 +54,8 @@ private:
 		const VectorXd& Shkm1 // Hidden
 		);
 
+	VectorXd class2vector(int _class) const;
+
 public:
 	MLP(size_t features,
 		size_t hidden_layers,
@@ -61,10 +64,12 @@ public:
 		std::function<VectorXd(const VectorXd&)> activation);
 
 	void forward(VectorXd C, double b);
+	VectorXd forward(VectorXd C) const;
 
 	void backward(double alpha, int y);
 
 	double training(double alpha, VectorXd x, int y, double b);
 	std::tuple<VectorXd, double> testing(VectorXd C, int y, double b);
 
+	double loss(std::span<VectorXd> X, std::span<int> true_y) const;
 };

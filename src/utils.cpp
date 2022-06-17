@@ -74,15 +74,3 @@ std::function<VectorXd(const VectorXd&)> set_activation(arguments::type t)
 			return sigmoid;
 	}
 }
-
-VectorXd class2vector(int _class, size_t n)
-{
-	VectorXd v(n);
-
-	for(size_t i = 0; i < n; i++)
-	{
-		v[i] = (int)i == _class-1 ? 1 : 0;
-	}
-
-	return v;
-}
