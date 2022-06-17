@@ -62,10 +62,10 @@ target_compile_definitions(${PROJECT_NAME}
 # Default flags
 if(UNIX)
 	if(NOT (DEFINED ENV{CFLAGS} OR CMAKE_C_FLAGS))
-		set(CMAKE_C_FLAGS "-Wall -Wextra -g -Og")
+		set(CMAKE_C_FLAGS "-Wall -Wextra -g")
 	endif()
 	if(NOT (DEFINED ENV{CXXFLAGS} OR CMAKE_CXX_FLAGS))
-		set(CMAKE_CXX_FLAGS "-Wall -Wextra -g -Og")
+		set(CMAKE_CXX_FLAGS "-Wall -Wextra -g")
 	endif()
 endif()
 

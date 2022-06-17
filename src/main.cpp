@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 		// TODO train
 
 		csv_file
-			<< e
+			<< e+1
 			<< ','
 			<< mlp.loss(i.train_X, i.train_y)
 			<< ','

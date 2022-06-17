@@ -93,7 +93,10 @@ void MLP::forward(VectorXd C, double b)
 VectorXd MLP::forward(VectorXd C) const
 {
 	for(size_t i = 0; i < W.size(); i++)
-		C = activation(C.transpose()*W[i]);
+	{
+		C = C.transpose()*W[i];
+		C = i == W.size()-1? softmax(C): activation(C);
+	}
 
 	return C;
 }
@@ -102,7 +105,7 @@ double calc_E(const VectorXd& Sd, const VectorXd& So)
 {
 	double E = 0.0;
 
-	for(size_t i = 0; i < So.size(); i++)
+	for(size_t i = 0; i < (size_t)So.size(); i++)
 	{
 		E += (Sd[i]*log(So[i]));
 	}
