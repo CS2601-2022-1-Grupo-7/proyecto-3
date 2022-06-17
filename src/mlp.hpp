@@ -32,7 +32,7 @@ class MLP
 private:
 	// Matrices http: https://eigen.tuxfamily.org/index.php?title=Main_Page
 	std::vector<MatrixXd> W;
-	std::vector<VectorXd> Sh;
+	//std::vector<VectorXd> Sh;
 
 	std::function<VectorXd(const VectorXd&)> activation;
 
@@ -55,6 +55,7 @@ private:
 		);
 
 	VectorXd class2vector(int _class) const;
+	std::vector<VectorXd> full_forward(VectorXd C) const;
 
 public:
 	MLP(size_t features,
@@ -63,12 +64,11 @@ public:
 		const std::vector<size_t>& neurons,
 		std::function<VectorXd(const VectorXd&)> activation);
 
-	void forward(VectorXd C, double b);
 	VectorXd forward(VectorXd C) const;
 
-	void backward(double alpha, int y);
+	void backward(double alpha, const VectorXd& X, int y);
 
-	double training(double alpha, VectorXd x, int y, double b);
+	void train(std::span<VectorXd> X, std::span<int> y, size_t batch_size, double alpha);
 	std::tuple<VectorXd, double> testing(VectorXd C, int y, double b);
 
 	double loss(std::span<VectorXd> X, std::span<int> true_y) const;

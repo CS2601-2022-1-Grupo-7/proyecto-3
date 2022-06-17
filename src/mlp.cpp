@@ -30,12 +30,12 @@ MatrixXd MLP::derivada_ho(
 	MatrixXd d(w.rows(), w.cols());
 	delta.resize(So.size());
 
-	for(size_t i = 0; i < So.size(); i++){
+	for(size_t i = 0; i < (size_t)So.size(); i++){
 		delta(i) = ((So[i]-Sd[i])*So[i]*(1.0-So[i]));
 	}
 
-	for(size_t i = 0; i < w.rows(); i++){
-		for(size_t j = 0; j < w.cols(); j++){
+	for(size_t i = 0; i < (size_t)w.rows(); i++){
+		for(size_t j = 0; j < (size_t)w.cols(); j++){
 			d(i,j) = delta(j)*Shk(i);
 		}
 	}
@@ -55,16 +55,16 @@ MatrixXd MLP::derivada_hh(
 	VectorXd tmp(w.cols());
 	MatrixXd d(w.rows(), w.cols());
 
-	for(size_t j = 0; j < w.cols(); j++){
+	for(size_t j = 0; j < (size_t)w.cols(); j++){
 		double valTmp = 0.0;
-		for(size_t k = 0; k < delta.size(); k++){
+		for(size_t k = 0; k < (size_t)delta.size(); k++){
 			valTmp += delta(k)*W[km1+1](j,k);
 		}
 		tmp(j) = valTmp*Shk(j)*(1.0-Shk(j));
 	}
 
-	for(size_t i = 0; i < w.rows(); i++){
-		for(size_t j = 0; j < w.cols(); j++){
+	for(size_t i = 0; i < (size_t)w.rows(); i++){
+		for(size_t j = 0; j < (size_t)w.cols(); j++){
 			d(i,j) = tmp(j)*Shkm1(i);
 		}
 	}
@@ -73,21 +73,19 @@ MatrixXd MLP::derivada_hh(
 	return d;
 }
 
-void MLP::forward(VectorXd C, double b)
+std::vector<VectorXd> MLP::full_forward(VectorXd C) const
 {
-	this->Sh.push_back(C);
-	for(const auto& w: W)
+	std::vector<VectorXd> Sh;
+	Sh.push_back(C);
+
+	for(size_t i = 0; i < W.size(); i++)
 	{
-		// std::cout << "multi:\n" << C.transpose()*w << std::endl;
-		C = activation(C.transpose()*w);
-		// for(int c=0; c<C.size(); c++){
-		// 	C[c] = C[c]+b;
-		// }
-		this->Sh.push_back(C);
+		C = C.transpose()*W[i];
+		C = i == W.size()-1? softmax(C): activation(C);
+		Sh.push_back(C);
 	}
-	// std::cout<<"C\n" << C << std::endl;
-	// this->Sh.push_back(softMax(C));
-	// this->Sh.push_back(C);
+
+	return Sh;
 }
 
 VectorXd MLP::forward(VectorXd C) const
@@ -113,9 +111,6 @@ double calc_E(const VectorXd& Sd, const VectorXd& So)
 }
 
 std::tuple<VectorXd, double> MLP::testing(VectorXd C, int y, double b){
-	// for (auto i=0; i< W.size(); i++){
-	// 	std::cout << W[i] << std::endl;
-	// }
 	VectorXd Sdd = class2vector(y);
 
 	for(const auto& w: W)
@@ -128,30 +123,26 @@ std::tuple<VectorXd, double> MLP::testing(VectorXd C, int y, double b){
 	return {C, calc_E(Sdd, C)};
 }
 
-
-double MLP::training(double alpha, VectorXd x, int y, double bias){
-	// for (auto i=0; i< W.size(); i++){
-	// 	std::cout << W[i] << std::endl;
-	// }
-
-	VectorXd Sd = class2vector(y);
-
-	forward(x, bias);
-	backward(alpha, y);
-	forward(x, bias);
-
-	return calc_E(Sd, Sh.back());
+void MLP::train(std::span<VectorXd> X, std::span<int> y, size_t batch_size, double alpha)
+{
+	for(size_t b = 0; b < batch_size; b++)
+	{
+		size_t i = rand() % X.size();
+		backward(alpha, X[i], y[i]);
+	}
 }
 
-void MLP::backward(double alpha, int y)
+// FIXME
+void MLP::backward(double alpha, const VectorXd& X, int y)
 {
+	auto Sh = full_forward(X);
 	VectorXd Sd = class2vector(y);
 	VectorXd delta(W[W.size()-1].cols()); //cambiar
 	std::vector<MatrixXd> WT = W;
 
 	for(ssize_t i = W.size()-1; i >= 0; i--)
 	{
-		if(i == W.size() -1){
+		if(i == (ssize_t)W.size() -1){
 			WT[i] -= alpha*derivada_ho(W[i], i, delta, Sh[i+1], Sd, Sh[i+0]);
 		}
 		else{
@@ -173,7 +164,7 @@ MLP::MLP(size_t features,
 	if (hidden_layers != 0){
 		MatrixXd m = MatrixXd::Random(features,neurons[0]);
 		W.push_back(m);
-		for (int i=0; i<hidden_layers-1; i++){
+		for (size_t i=0; i<hidden_layers-1; i++){
 			int row = neurons[i];
 			int col = neurons[i+1];
 			m = MatrixXd::Random(row, col);

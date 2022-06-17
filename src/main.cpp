@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
 
 	for(size_t e = 0; e < args.epochs; e++)
 	{
-		// TODO train
+		mlp.train(i.train_X, i.train_y, args.batch_size, 0.5);
 
 		csv_file
 			<< e+1
