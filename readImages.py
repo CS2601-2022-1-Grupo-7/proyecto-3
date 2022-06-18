@@ -27,7 +27,7 @@ files_names = os.listdir(img_path)
 dataset_butterfly = []
 dataset_butterfly_names = []
 
-haar = 4
+haar = 5
 
 for file in os.scandir(os.path.join(img_path, "images")):
   name, ext = os.path.splitext(file.name)

@@ -130,11 +130,15 @@ std::tuple<VectorXd, double> MLP::testing(VectorXd C, int y, double b){
 
 void MLP::train(const std::vector<VectorXd>& X, const std::vector<int>& y, size_t batch_size, double alpha)
 {
-	for(size_t b = 0; b < batch_size; b++)
-	{
-		size_t i = rand() % X.size();
-		backward(alpha, X[i], y[i]);
-	}
+	if(batch_size == 0)
+		for(size_t i = 0; i < X.size(); i++)
+			backward(alpha, X[i], y[i]);
+	else
+		for(size_t b = 0; b < batch_size; b++)
+		{
+			size_t i = rand() % X.size();
+			backward(alpha, X[i], y[i]);
+		}
 }
 
 void MLP::backward(double alpha, const VectorXd& X, int y)
