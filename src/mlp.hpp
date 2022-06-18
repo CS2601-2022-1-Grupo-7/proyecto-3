@@ -67,7 +67,6 @@ public:
 	void backward(double alpha, const VectorXd& X, int y);
 
 	void train(const std::vector<VectorXd>& X, const std::vector<int>& y, size_t batch_size, double alpha);
-	std::tuple<VectorXd, double> testing(VectorXd C, int y, double b);
-
+	std::vector<int> predict(const std::vector<VectorXd>& X) const;
 	double loss(const std::vector<VectorXd>& X, const std::vector<int>& true_y) const;
 };

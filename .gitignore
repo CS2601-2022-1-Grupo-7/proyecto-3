@@ -53,3 +53,5 @@ _deps
 
 build
 leedsbutterfly
+*.csv
+*.json

@@ -36,18 +36,19 @@ int main(int argc, char** argv) {
 		set_activation(args.activation)
 	);
 
-	//std::ofstream csv_file ("error.csv");
+	std::ofstream csv_file ("error.csv");
+	std::ofstream test_csv_file ("testing.csv");
 
-	//if(!csv_file.is_open())
-	//	return EXIT_FAILURE;
+	if(!csv_file.is_open() || !test_csv_file.is_open())
+		return EXIT_FAILURE;
 
-	std::cout << "epoch,train,validation\n";
+	csv_file << "epoch,train,validation\n";
 
 	for(size_t e = 0; e < args.epochs; e++)
 	{
 		mlp.train(i.train_X, i.train_y, args.batch_size, args.alpha);
 
-		std::cout
+		csv_file
 			<< e+1
 			<< ','
 			<< mlp.loss(i.train_X, i.train_y)
@@ -56,6 +57,12 @@ int main(int argc, char** argv) {
 			<< '\n'
 		;
 	}
+
+	auto yp = mlp.predict(i.test_X);
+	test_csv_file << "y,yp\n";
+
+	for(size_t ii = 0; ii < yp.size(); ii++)
+		test_csv_file << i.test_y[ii] << ',' << yp[ii] << '\n';
 
 	return EXIT_SUCCESS;
 }

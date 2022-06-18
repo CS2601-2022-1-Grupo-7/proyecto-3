@@ -117,19 +117,6 @@ double calc_E(const VectorXd& Sd, const VectorXd& So)
 	return -1.0*E;
 }
 
-std::tuple<VectorXd, double> MLP::testing(VectorXd C, int y, double b){
-	VectorXd Sdd = class2vector(y);
-
-	for(const auto& w: W)
-	{
-		C = activation(C.transpose()*w);
-		for(int c=0; c<C.size(); c++){
-			C[c] = C[c]+b;
-		}
-	}
-	return {C, calc_E(Sdd, C)};
-}
-
 void MLP::train(const std::vector<VectorXd>& X, const std::vector<int>& y, size_t batch_size, double alpha)
 {
 	if(batch_size == 0)
@@ -213,4 +200,17 @@ VectorXd MLP::class2vector(int _class) const
 	}
 
 	return v;
+}
+
+std::vector<int> MLP::predict(const std::vector<VectorXd>& X) const
+{
+	std::vector<int> r; r.reserve(X.size());
+
+	for(const auto& x: X)
+	{
+		auto yp = forward(x);
+		r.push_back(std::distance(yp.begin(), std::max_element(yp.begin(), yp.end()))+1);
+	}
+
+	return r;
 }
