@@ -35,6 +35,7 @@ void arguments::usage(int exit_code) const
 		<< "\t-r, --relu                 Select RELU activation function.\n"
 		<< "\t-b, --batch=N              Size of a batch.\n"
 		<< "\t-e, --epochs=N             Training epochs.\n"
+		<< "\t-a, --alpha=N              Alpha.\n"
 		;
 
 	exit(exit_code);
@@ -47,7 +48,7 @@ void arguments::parse()
 
 	int c;
 
-	static const char shortopts[] = "hl:n:N:strb:e:";
+	static const char shortopts[] = "hl:n:N:strb:e:a:";
 	static const option options[] =
 	{
 		{"help",            no_argument,       nullptr, 'h'},
@@ -59,6 +60,7 @@ void arguments::parse()
 		{"relu",            no_argument,       nullptr, 'r'},
 		{"batch",           required_argument, nullptr, 'b'},
 		{"epochs",          required_argument, nullptr, 'e'},
+		{"alpha",           required_argument, nullptr, 'a'},
 		{nullptr,           0,                 nullptr, 0},
 	};
 
@@ -66,6 +68,10 @@ void arguments::parse()
 	{
 		switch(c)
 		{
+			case 'a':
+				alpha = atof(optarg);
+				break;
+
 			case 'e':
 				epochs = atoi(optarg);
 				break;

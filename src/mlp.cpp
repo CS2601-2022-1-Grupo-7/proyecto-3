@@ -43,7 +43,6 @@ MatrixXd MLP::derivada_ho(
 	return d;
 }
 
-// FIXME
 MatrixXd MLP::derivada_hh(
 	size_t I,
 	size_t J,
@@ -59,6 +58,7 @@ MatrixXd MLP::derivada_hh(
 
 	assert((size_t)Shk.size() == J);
 	assert((size_t)Shkm1.size() == I);
+	assert(W[k+1].cols() == delta.size());
 
 	for(size_t j = 0; j < J; j++){
 		double valTmp = 0.0;

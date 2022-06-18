@@ -36,18 +36,18 @@ int main(int argc, char** argv) {
 		set_activation(args.activation)
 	);
 
-	std::ofstream csv_file ("error.csv");
+	//std::ofstream csv_file ("error.csv");
 
-	if(!csv_file.is_open())
-		return EXIT_FAILURE;
+	//if(!csv_file.is_open())
+	//	return EXIT_FAILURE;
 
-	csv_file << "epoch,train,validation\n";
+	std::cout << "epoch,train,validation\n";
 
 	for(size_t e = 0; e < args.epochs; e++)
 	{
-		mlp.train(i.train_X, i.train_y, args.batch_size, 0.5);
+		mlp.train(i.train_X, i.train_y, args.batch_size, args.alpha);
 
-		csv_file
+		std::cout
 			<< e+1
 			<< ','
 			<< mlp.loss(i.train_X, i.train_y)
