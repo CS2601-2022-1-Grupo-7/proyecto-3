@@ -11,44 +11,29 @@ import pandas as pd
 from sklearn import preprocessing
 import random
 
-def transfHaar(path, x):  
-  LL = cv2.imread(path)
-  # if LL is None:
-  #   return
-  LL = cv2.cvtColor(LL, cv2.COLOR_BGR2GRAY)
+def transfHaar(path, mask_path, x):  
+  LL = cv2.bitwise_and(cv2.imread(path), cv2.imread(mask_path))
+  LL = cv2.cvtColor(LL, cv2.COLOR_RGB2GRAY)
   LL = cv2.resize(LL, (512, 512))
   for _ in range(x):
     LL, (LH, HL, HH) = pywt.dwt2(LL, 'haar')
   LL = LL.flatten()
   return LL
 
-# def draw(arr):
-#   n = int((len(arr))**0.5)
-#   data = np.zeros((n, n))
-#   for i in range(n):
-#     for j in range(n):
-#       data[i][j] = arr[i*n+j]
-#   fig = plt.figure(figsize=(6, 1.5))
-#   for i, a in enumerate([data]):
-#       ax = fig.add_subplot(1, 4, i + 1)
-#       ax.imshow(a, interpolation="nearest", cmap=plt.cm.gray)
-#       ax.set_xticks([])
-#       ax.set_yticks([])
-#   fig.tight_layout()
-#   plt.show()
-
 img_path = sys.argv[1]
+seg_path = os.path.join(img_path, "segmentations")
 
 files_names = os.listdir(img_path)
 dataset_butterfly = []
 dataset_butterfly_names = []
 
-haar = 3
+haar = 4
 
-for file in files_names:
-  result = transfHaar(img_path + '/' + file, haar)
+for file in os.scandir(os.path.join(img_path, "images")):
+  name, ext = os.path.splitext(file.name)
+  result = transfHaar(file.path, os.path.join(seg_path, f"{name}_seg0{ext}"), haar)
   dataset_butterfly.append(result)
-  dataset_butterfly_names.append(file[0]+file[1]+file[2])
+  dataset_butterfly_names.append(file.name[:3])
 
 dataset_butterfly = preprocessing.MinMaxScaler().fit_transform(dataset_butterfly)
 
