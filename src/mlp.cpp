@@ -34,7 +34,7 @@ MatrixXd MLP::derivada_ho(
 	assert((size_t)Shk.size() == I);
 
 	for(size_t j = 0; j < J; j++)
-		delta(j) = So[j]-Sd[j];
+		delta(j) = (So[j]-Sd[j])*So[j]*(1.0-So[j]);
 
 	for(size_t i = 0; i < I; i++)
 		for(size_t j = 0; j < J; j++)
