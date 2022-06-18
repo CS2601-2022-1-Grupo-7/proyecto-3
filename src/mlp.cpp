@@ -179,6 +179,9 @@ MLP::MLP(size_t features,
 		MatrixXd m = MatrixXd::Random(features, output_neurons);
 		W.push_back(m);
 	}
+
+	for(const auto& w: W)
+		std::cerr << w.rows() << ' ' << w.cols() << '\n';
 };
 
 double MLP::loss(const std::vector<VectorXd>& X, const std::vector<int>& true_y) const

@@ -15,9 +15,9 @@ def transfHaar(path, x):
   LL = cv2.imread(path)
   # if LL is None:
   #   return
-  LL = cv2.resize(LL, (512, 512))
   LL = cv2.cvtColor(LL, cv2.COLOR_BGR2GRAY)
-  for i in range(x):
+  LL = cv2.resize(LL, (512, 512))
+  for _ in range(x):
     LL, (LH, HL, HH) = pywt.dwt2(LL, 'haar')
   LL = LL.flatten()
   return LL
@@ -37,9 +37,6 @@ def transfHaar(path, x):
 #   fig.tight_layout()
 #   plt.show()
 
-def norm(vec):
-  return preprocessing.normalize([vec])
-
 img_path = sys.argv[1]
 
 files_names = os.listdir(img_path)
@@ -53,6 +50,8 @@ for file in files_names:
   dataset_butterfly.append(result)
   dataset_butterfly_names.append(file[0]+file[1]+file[2])
 
+dataset_butterfly = preprocessing.MinMaxScaler().fit_transform(dataset_butterfly)
+
 df = pd.DataFrame(list(zip(dataset_butterfly, dataset_butterfly_names)), columns =['vect', 'class']) 
 train, validate, test = np.split(df.sample(frac=1, random_state=random.randint(10, 50)), [int(.8*len(df)), int(.9*len(df))])
 
@@ -62,7 +61,7 @@ for index, row in train.iterrows():
   key = row['vect']
   key = key.tolist()
   value = row['class']
-  trainX.append(norm(key).tolist()[0])
+  trainX.append(key)
   trainY.append(value)
 
 testX = []
@@ -71,7 +70,7 @@ for index, row in test.iterrows():
   key = row['vect']
   key = key.tolist()
   value = row['class']
-  testX.append(norm(key).tolist()[0])
+  testX.append(key)
   testY.append(value)
 
 validateX = []
@@ -80,7 +79,7 @@ for index, row in validate.iterrows():
   key = row['vect']
   key = key.tolist()
   value = row['class']
-  validateX.append(norm(key).tolist()[0])
+  validateX.append(key)
   validateY.append(value)
 
 dictF = {'trainX': trainX, 'trainY': trainY, 'testX': testX, 'testY': testY, 'validateX': validateX, 'validateY': validateY}
