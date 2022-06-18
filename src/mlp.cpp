@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with hello.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <limits>
+
 #include "mlp.hpp"
 #include "utils.hpp"
 
@@ -110,7 +112,7 @@ double calc_E(const VectorXd& Sd, const VectorXd& So)
 
 	for(size_t i = 0; i < (size_t)So.size(); i++)
 	{
-		E += (Sd[i]*log(So[i]));
+		E += (Sd[i]*log(So[i] + std::numeric_limits<double>::epsilon()));
 	}
 	return -1.0*E;
 }
