@@ -17,7 +17,7 @@
 cmake_minimum_required(VERSION 3.13.0)
 
 project(proyecto-3
-	VERSION 0.0.0
+	VERSION 1.0.0
 	DESCRIPTION "Proyecto 3"
 	HOMEPAGE_URL "https://github.com/CS2601-2022-1-Grupo-7/proyecto-3"
 )

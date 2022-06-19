@@ -16,4 +16,6 @@ cd build
 
 cmake ..
 make
+
+../readImages.py leedsbutterfly | ./proyecto-3 ...
 ```
